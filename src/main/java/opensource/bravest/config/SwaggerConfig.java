@@ -20,8 +20,8 @@ public class SwaggerConfig {
 
     private Info apiInfo() {
         return new Info()
-                .title("API Title") // API의 제목
-                .description("This is my Swagger UI") // API에 대한 설명
-                .version("1.0.0"); // API의 버전
+                .title("Bravest")
+                .description("오픈소스 프로젝트 Bravest api 명세서입니다.")
+                .version("1.0.0");
     }
 }
