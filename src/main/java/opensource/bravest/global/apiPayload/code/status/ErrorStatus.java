@@ -17,6 +17,8 @@ public enum ErrorStatus implements BaseErrorCode {
   _NOT_FOUND(HttpStatus.NOT_FOUND, "COMMON404", "요청한 리소스를 찾을 수 없습니다."),
   _FAMILY_NOT_FOUND(HttpStatus.NOT_FOUND, "FAMILY404", "유효하지 않은 초대 코드입니다."),
   _USER_NOT_FOUND(HttpStatus.NOT_FOUND, "USER404", "사용자를 찾을 수 없습니다."),
+  _CHATROOM_NOT_FOUND(HttpStatus.NOT_FOUND, "USER404", "채팅방을 찾을 수 없습니다."),
+  _CHATLIST_NOT_FOUND(HttpStatus.NOT_FOUND, "USER404", "리스트를 찾을 수 없습니다."),
 
   ;
 
