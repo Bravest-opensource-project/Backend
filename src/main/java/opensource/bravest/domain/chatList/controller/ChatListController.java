@@ -5,6 +5,7 @@ import static opensource.bravest.domain.chatList.dto.ChatListDto.ChatListUpdateR
 import static opensource.bravest.domain.chatList.dto.ChatListDto.ChatListCreateRequest;
 
 import opensource.bravest.domain.chatList.service.ChatListService;
+import opensource.bravest.global.apiPayload.ApiResponse;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -28,33 +29,33 @@ public class ChatListController {
     private final ChatListService chatListService;
 
     @PostMapping
-    public ResponseEntity<ChatListResponse> createChatList(@Valid @RequestBody ChatListCreateRequest request) {
+    public ApiResponse<ChatListResponse> createChatList(@Valid @RequestBody ChatListCreateRequest request) {
         ChatListResponse response = chatListService.createChatList(request);
-        return new ResponseEntity<>(response, HttpStatus.CREATED); // 201 Created
+        return ApiResponse.onSuccess(response);
     }
 
     @GetMapping("/room/{roomId}")
-    public ResponseEntity<List<ChatListResponse>> getChatListsByRoomId(@PathVariable Long roomId) {
+    public ApiResponse<List<ChatListResponse>> getChatListsByRoomId(@PathVariable Long roomId) {
         List<ChatListResponse> response = chatListService.getChatListsByRoomId(roomId);
-        return ResponseEntity.ok(response); // 200 OK
+        return ApiResponse.onSuccess(response);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<ChatListResponse> getChatListById(@PathVariable Long id) {
+    public ApiResponse<ChatListResponse> getChatListById(@PathVariable Long id) {
         ChatListResponse response = chatListService.getChatListById(id);
-        return ResponseEntity.ok(response); // 200 OK
+        return ApiResponse.onSuccess(response);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<ChatListResponse> updateChatList(@PathVariable Long id,
+    public ApiResponse<ChatListResponse> updateChatList(@PathVariable Long id,
                                                            @Valid @RequestBody ChatListUpdateRequest request) {
         ChatListResponse response = chatListService.updateChatList(id, request);
-        return ResponseEntity.ok(response); // 200 OK
+        return ApiResponse.onSuccess(response);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteChatList(@PathVariable Long id) {
+    public ApiResponse<Void> deleteChatList(@PathVariable Long id) {
         chatListService.deleteChatList(id);
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT); // 204 No Content
+        return ApiResponse.onSuccess(null);
     }
 }
