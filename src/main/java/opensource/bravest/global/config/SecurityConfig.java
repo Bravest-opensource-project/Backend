@@ -41,7 +41,8 @@ public class SecurityConfig {
       "/login/**", "/login/oauth2/**",
       "/api/test/auth/**",
       "/rooms/**",
-      "/anonymous-profiles/**"
+      "/anonymous-profiles/**",
+      "/votes/**"
   };
 
   // 정적 리소스
