@@ -56,6 +56,27 @@ public class JwtTokenProvider {
                 .compact();
     }
 
+    public Long getIdFromToken(String token) {
+        return Jwts.parser()
+            .setSigningKey(Keys.hmacShaKeyFor(secret.getBytes()))
+            .build()
+            .parseClaimsJws(token)
+            .getBody()
+            .get("id", Long.class);
+    }
+
+    public boolean validateToken(String token) {
+        try {
+            Jwts.parser()
+                .setSigningKey(Keys.hmacShaKeyFor(secret.getBytes()))
+                .build()
+                .parseClaimsJws(token);
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
     public Claims parseClaims(String token) {
         return Jwts.parser().verifyWith(key).build().parseSignedClaims(token).getPayload();
     }

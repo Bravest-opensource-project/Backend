@@ -52,7 +52,7 @@ public class ChatListService {
     }
 
     public List<ChatListResponse> getChatListsByRoomId(Long roomId) {
-        List<ChatList> chatLists = chatListRepository.findAllByRoomIdOrderByCreatedAtDesc(roomId);
+        List<ChatList> chatLists = chatListRepository.findAllByRoomId(roomId);
         return chatLists.stream()
             .map(ChatListResponse::fromEntity)
             .collect(Collectors.toList());
