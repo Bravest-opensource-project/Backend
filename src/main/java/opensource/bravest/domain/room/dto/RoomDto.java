@@ -1,35 +1,40 @@
 package opensource.bravest.domain.room.dto;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
+
+import java.time.LocalDateTime;
 
 public class RoomDto {
 
     @Getter
+    @NoArgsConstructor
     public static class CreateRoomRequest {
         private String title;
     }
 
     @Getter
-    public static class CreateRoomResponse {
-        private final String roomCode;
-        private final String title;
-
-        public CreateRoomResponse(String roomCode, String title) {
-            this.roomCode = roomCode;
-            this.title = title;
-        }
+    @NoArgsConstructor
+    public static class UpdateRoomRequest {
+        private String title;
     }
 
     @Getter
-    public static class JoinRoomResponse {
-        private final String roomCode;
-        private final String title;
-        private final String anonymousName;
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class RoomResponse {
+        private Long id;
+        private String roomCode;
+        private String title;
+        private LocalDateTime createdAt;
+    }
 
-        public JoinRoomResponse(String roomCode, String title, String anonymousName) {
-            this.roomCode = roomCode;
-            this.title = title;
-            this.anonymousName = anonymousName;
-        }
+    @Getter
+    @NoArgsConstructor
+    public static class JoinRoomRequest {
+        private String roomCode;
     }
 }
