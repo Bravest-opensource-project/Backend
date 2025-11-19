@@ -1,6 +1,8 @@
 package opensource.bravest.domain.message.dto;
 
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+import opensource.bravest.domain.message.entity.ChatMessage;
 
 import java.time.LocalDateTime;
 
@@ -12,15 +14,31 @@ public class MessageDto {
     }
 
     @Getter
+    @RequiredArgsConstructor
     public static class MessageResponse {
         private final String senderName;  // 익명 닉네임
         private final String content;
         private final LocalDateTime createdAt;
 
-        public MessageResponse(String senderName, String content, LocalDateTime createdAt) {
-            this.senderName = senderName;
-            this.content = content;
-            this.createdAt = createdAt;
+        public static MessageResponse from(ChatMessage chatMessage) {
+            return new MessageResponse(
+                chatMessage.getSender().getAnonymousName(),
+                chatMessage.getContent(),
+                chatMessage.getCreatedAt()
+                );
         }
+    }
+
+    @Getter
+    @RequiredArgsConstructor
+    public static class MessageRequest {
+        private final Long chatRoomId;
+        private final String content;
+    }
+
+    @Getter
+    @RequiredArgsConstructor
+    public static class ChatReadRequest {
+        private final Long chatRoomId;
     }
 }

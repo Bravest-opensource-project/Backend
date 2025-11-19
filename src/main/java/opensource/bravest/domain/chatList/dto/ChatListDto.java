@@ -49,7 +49,7 @@ public class ChatListDto {
                 .id(chatList.getId())
                 .roomId(chatList.getRoomId())
                 .content(chatList.getContent())
-                .registeredBy(chatList.getRegisteredBy())
+                .registeredBy(chatList.getRegisteredBy().getId())
                 .createdAt(chatList.getCreatedAt())
                 .build();
         }

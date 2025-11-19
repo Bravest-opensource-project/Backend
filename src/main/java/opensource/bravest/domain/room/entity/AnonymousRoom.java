@@ -1,8 +1,11 @@
 package opensource.bravest.domain.room.entity;
 import jakarta.persistence.*;
 import lombok.*;
+import opensource.bravest.domain.profile.entity.AnonymousProfile;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter
@@ -22,6 +25,10 @@ public class AnonymousRoom {
     // 방 제목 (선택)
     @Column(nullable = false, length = 100)
     private String title;
+
+    @OneToMany(mappedBy = "room")
+    private List<AnonymousProfile> profiles = new ArrayList<>();
+
 
     private LocalDateTime createdAt;
 }
