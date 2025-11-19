@@ -22,7 +22,7 @@ public class ChatMessageController {
     private final ChatMessageService chatMessageService;
     private final SimpMessagingTemplate messagingTemplate;
 
-    @MessageMapping("/chat.send")
+    @MessageMapping("/chat/send")
     public void sendMessage(MessageRequest request, Principal principal) {
         Long id = Long.parseLong(principal.getName());
         MessageResponse response = chatMessageService.send(request, id);
