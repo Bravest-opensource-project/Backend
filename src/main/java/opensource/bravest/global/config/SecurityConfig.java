@@ -40,6 +40,8 @@ public class SecurityConfig {
       "/oauth2/**",
       "/login/**", "/login/oauth2/**",
       "/api/test/auth/**",
+      "/rooms/**",
+      "/anonymous-profiles/**"
   };
 
   // 정적 리소스
