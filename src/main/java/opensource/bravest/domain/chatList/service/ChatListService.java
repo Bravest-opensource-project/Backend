@@ -7,7 +7,6 @@ import static opensource.bravest.global.apiPayload.code.status.ErrorStatus._CHAT
 import static opensource.bravest.global.apiPayload.code.status.ErrorStatus._CHATROOM_NOT_FOUND;
 import static opensource.bravest.global.apiPayload.code.status.ErrorStatus._USER_NOT_FOUND;
 
-import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import opensource.bravest.domain.chatList.entity.ChatList;
 import opensource.bravest.domain.chatList.repository.ChatListRepository;
@@ -38,9 +37,6 @@ public class ChatListService {
 
         AnonymousRoom room = anonymousRoomRepository.findById(request.getRoomId())
             .orElseThrow(() -> new CustomException(_CHATROOM_NOT_FOUND));
-
-        ChatList chatList = chatListRepository.findById(id)
-            .orElseThrow(ChatListNotFoundException::new);
 
         AnonymousProfile profile = anonymousProfileRepository.findById(request.getRegisteredBy())
             .orElseThrow(() -> new CustomException(_USER_NOT_FOUND));
