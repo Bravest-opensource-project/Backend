@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import javax.crypto.SecretKey;
+import java.nio.charset.StandardCharsets;
 import java.time.Instant;
 import java.util.Date;
 import java.util.Map;
@@ -29,9 +30,19 @@ public class JwtTokenProvider {
 
     @PostConstruct
     void init() {
+        if (secret == null || secret.isBlank()) {
+            throw new IllegalStateException("jwt.secret is not configured. Check your application.yml / env.");
+        }
+
         byte[] keyBytes;
-        // secret이 Base64가 아니더라도 자동 처리 가능하게
-        try { keyBytes = Decoders.BASE64.decode(secret); } catch (Exception e) { keyBytes = secret.getBytes(); }
+        try {
+            // secret이 Base64면 여기서 정상 디코딩
+            keyBytes = Decoders.BASE64.decode(secret);
+        } catch (IllegalArgumentException e) {
+            // Base64 아니면 그냥 문자열 바이트로 사용
+            keyBytes = secret.getBytes(StandardCharsets.UTF_8);
+        }
+
         this.key = Keys.hmacShaKeyFor(keyBytes);
     }
 
@@ -57,20 +68,21 @@ public class JwtTokenProvider {
     }
 
     public Long getIdFromToken(String token) {
-        return Jwts.parser()
-            .setSigningKey(Keys.hmacShaKeyFor(secret.getBytes()))
-            .build()
-            .parseClaimsJws(token)
-            .getBody()
-            .get("id", Long.class);
+        Claims claims = Jwts.parser()
+                .verifyWith(key)              // init()에서 만든 key 재사용
+                .build()
+                .parseSignedClaims(token)
+                .getPayload();
+
+        return claims.get("id", Long.class);
     }
 
     public boolean validateToken(String token) {
         try {
             Jwts.parser()
-                .setSigningKey(Keys.hmacShaKeyFor(secret.getBytes()))
-                .build()
-                .parseClaimsJws(token);
+                    .verifyWith(key)
+                    .build()
+                    .parseSignedClaims(token);
             return true;
         } catch (Exception e) {
             return false;
@@ -78,7 +90,10 @@ public class JwtTokenProvider {
     }
 
     public Claims parseClaims(String token) {
-        return Jwts.parser().verifyWith(key).build().parseSignedClaims(token).getPayload();
+        return Jwts.parser()
+                .verifyWith(key)
+                .build()
+                .parseSignedClaims(token)
+                .getPayload();
     }
 }
-

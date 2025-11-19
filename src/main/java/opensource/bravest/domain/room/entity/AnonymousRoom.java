@@ -26,9 +26,14 @@ public class AnonymousRoom {
     @Column(nullable = false, length = 100)
     private String title;
 
-    @OneToMany(mappedBy = "room")
+    @OneToMany(mappedBy = "room", cascade = CascadeType.ALL, orphanRemoval = true)
+    @Builder.Default
     private List<AnonymousProfile> profiles = new ArrayList<>();
 
 
     private LocalDateTime createdAt;
+
+    public void updateTitle(String title) {
+        this.title = title;
+    }
 }
