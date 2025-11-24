@@ -22,7 +22,7 @@ import jakarta.validation.Valid;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/v1/chatlists")
+@RequestMapping("/chatlists")
 @RequiredArgsConstructor
 public class ChatListController {
 
