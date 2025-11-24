@@ -15,13 +15,10 @@ public class ChatListDto {
     @Setter
     public static class ChatListCreateRequest {
 
-        @NotNull(message = "채팅방 ID는 필수입니다.")
         private Long roomId;
 
-        @NotBlank(message = "아이디어 내용은 필수입니다.")
         private String content;
 
-        @NotBlank(message = "등록자는 필수입니다.")
         private Long registeredBy;
     }
 
@@ -31,7 +28,6 @@ public class ChatListDto {
     public static class ChatListUpdateRequest {
 
         // 아이디어 내용 수정만 가정
-        @NotBlank(message = "수정할 내용은 필수입니다.")
         private String content;
     }
 
