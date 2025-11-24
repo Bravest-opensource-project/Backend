@@ -32,9 +32,6 @@ public class ChatListService {
 
     @Transactional
     public ChatListResponse createChatList(ChatListCreateRequest request) {
-
-        Long id = 1L;
-
         AnonymousRoom room = anonymousRoomRepository.findById(request.getRoomId())
             .orElseThrow(() -> new CustomException(_CHATROOM_NOT_FOUND));
 

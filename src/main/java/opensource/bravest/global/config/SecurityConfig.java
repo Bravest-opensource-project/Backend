@@ -41,8 +41,10 @@ public class SecurityConfig {
       "/login/**", "/login/oauth2/**",
       "/api/test/auth/**",
       "/rooms/**",
+      "/chatlists/**",
       "/anonymous-profiles/**",
-      "/votes/**"
+      "/votes/**",
+      "/ws-connect/**", "/chat-test", "/pub/**", "/sub/**"
   };
 
   // 정적 리소스
