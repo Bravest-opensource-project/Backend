@@ -1,0 +1,31 @@
+# 빌드와 실행을 동시에 수행합니다.
+
+# 빌드 단계
+FROM eclipse-temurin:21-jdk-jammy AS build
+WORKDIR /workspace
+
+COPY gradlew .
+COPY gradle ./gradle
+
+COPY build.gradle settings.gradle ./
+
+RUN chmod +x gradlew
+
+RUN ./gradlew --no-daemon dependencies || true
+
+COPY . .
+
+RUN ./gradlew --no-daemon bootJar
+
+# 실행 단계
+FROM eclipse-temurin:21-jdk-jammy
+
+WORKDIR /app
+
+COPY --from=build /workspace/build/libs/*.jar app.jar
+
+ENV JAVA_OPTS="-Dspring.profiles.active=prod"
+
+EXPOSE 8080
+
+ENTRYPOINT ["sh", "-c", "java $JAVA_OPTS -jar app.jar"]
