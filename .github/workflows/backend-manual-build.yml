@@ -7,6 +7,14 @@ jobs:
   backend-manual-build:
     runs-on: ubuntu-latest
 
+    env:
+      DB_URL: ${{ secrets.DB_URL }}
+      DB_USERNAME: ${{ secrets.DB_USERNAME }}
+      DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+      JWT_SECRET: ${{ secrets.JWT_SECRET }}
+      JWT_ACCESS_TOKEN_VALIDITY_SECONDS: ${{ secrets.JWT_ACCESS_TOKEN_VALIDITY_SECONDS }}
+      JWT_REFRESH_TOKEN_VALIDITY_SECONDS: ${{ secrets.JWT_REFRESH_TOKEN_VALIDITY_SECONDS }}
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
