@@ -27,36 +27,34 @@ public class StompHandler implements ChannelInterceptor {
 
     @Override
     public Message<?> preSend(Message<?> message, MessageChannel channel) {
-        StompHeaderAccessor accessor = MessageHeaderAccessor.getAccessor(message, StompHeaderAccessor.class);
+        StompHeaderAccessor accessor =
+                MessageHeaderAccessor.getAccessor(message, StompHeaderAccessor.class);
+
         if (accessor == null) {
             return message;
         }
 
         StompCommand command = accessor.getCommand();
         if (StompCommand.CONNECT.equals(command)) {
-            String token = accessor.getFirstNativeHeader("Authorization");
-
-            if (token != null && token.startsWith("Bearer ")) {
-                token = token.substring(7);
+            String anonymousId = accessor.getFirstNativeHeader("anonymousId");
+            if (anonymousId == null || anonymousId.isBlank()) {
+                log.warn("STOMP CONNECT: anonymousId 누락");
+                throw new IllegalArgumentException("anonymousId header is required");
             }
 
-            // 토큰 검증 후 인증 객체 생성
-            if (token != null && jwtProvider.validateToken(token)) {
-                Long id = jwtProvider.getIdFromToken(token);
-
-                anonymousProfileRepository.findById(id).ifPresent(member -> {
-                    Authentication authentication = new UsernamePasswordAuthenticationToken(
-                        id, null
-                    );
-                    // SecurityContext에도 저장
-                    SecurityContextHolder.getContext().setAuthentication(authentication);
-                    // STOMP 세션 사용자로도 설정 -> @MessageMapping Principal로 전달됨
-                    accessor.setUser(authentication);
-                    log.info("STOMP 연결 인증 성공 및 Principal 설정: {}", id);
-                });
-            } else {
-                log.warn("STOMP CONNECT 토큰 검증 실패 또는 토큰 누락");
-            }
+            anonymousProfileRepository.findById(Long.valueOf(anonymousId))
+                    .ifPresentOrElse(member -> {
+                        Authentication auth = new UsernamePasswordAuthenticationToken(
+                                anonymousId,
+                                null,
+                                java.util.List.of(new SimpleGrantedAuthority("ROLE_ANONYMOUS"))
+                        );
+                        SecurityContextHolder.getContext().setAuthentication(auth);
+                        accessor.setUser(auth);  // → @MessageMapping의 Principal로 전달
+                        log.info("STOMP CONNECT: anonymousId={} Principal 설정 완료", anonymousId);}, () -> {
+                        log.warn("STOMP CONNECT: 존재하지 않는 anonymousId={}", anonymousId);
+                        throw new IllegalArgumentException("Invalid anonymousId");
+                    });
         } else if (StompCommand.SEND.equals(command) || StompCommand.SUBSCRIBE.equals(command)) {
             Principal user = accessor.getUser();
             if (user == null) {
@@ -66,7 +64,6 @@ public class StompHandler implements ChannelInterceptor {
                 }
             }
         }
-
         return message;
     }
 }
