@@ -9,6 +9,7 @@ on:
       - 'src/**'
   push:
     branches: [ main, develop ]
+    workflow_dispatch:
 
 jobs:
   docker-compose-test:
