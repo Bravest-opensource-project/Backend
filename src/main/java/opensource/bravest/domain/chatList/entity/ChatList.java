@@ -8,12 +8,10 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToOne;
-import jakarta.persistence.PrePersist;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
+import java.time.LocalDateTime;
 import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -21,49 +19,46 @@ import opensource.bravest.domain.profile.entity.AnonymousProfile;
 import opensource.bravest.domain.room.entity.AnonymousRoom;
 import org.hibernate.annotations.CreationTimestamp;
 
-import java.time.LocalDateTime;
-
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(name = "chat_list")
 public class ChatList {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "room_id", nullable = false)
-    private AnonymousRoom room;
+  @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "room_id", nullable = false)
+  private AnonymousRoom room;
 
-    @NotNull
-    @Column(length = 255)
-    private String content;
+  @NotNull
+  @Column(length = 255)
+  private String content;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "profile_id", nullable = false)
-    private AnonymousProfile registeredBy;
+  @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "profile_id", nullable = false)
+  private AnonymousProfile registeredBy;
 
-    @CreationTimestamp
-    private LocalDateTime createdAt;
+  @CreationTimestamp private LocalDateTime createdAt;
 
-    @Builder
-    public ChatList(AnonymousRoom room, String content, AnonymousProfile registeredBy) {
-        this.room = room;
-        this.content = content;
-        this.registeredBy = registeredBy;
-    }
+  @Builder
+  public ChatList(AnonymousRoom room, String content, AnonymousProfile registeredBy) {
+    this.room = room;
+    this.content = content;
+    this.registeredBy = registeredBy;
+  }
 
-    public void updateContent(String content) {
-        this.content = content;
-    }
+  public void updateContent(String content) {
+    this.content = content;
+  }
 
-    public Long getRoomId() {
-        return this.room.getId();
-    }
+  public Long getRoomId() {
+    return this.room.getId();
+  }
 
-    public Long getProfileId() {
-        return this.registeredBy.getId();
-    }
+  public Long getProfileId() {
+    return this.registeredBy.getId();
+  }
 }

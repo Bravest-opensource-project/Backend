@@ -13,28 +13,29 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class OpenApiConfig {
 
-    private static final String SECURITY_SCHEME_NAME = "bearerAuth";
+  private static final String SECURITY_SCHEME_NAME = "bearerAuth";
 
-    @Bean
-    public OpenAPI baseOpenAPI() {
-        return new OpenAPI()
-                // 1) 전역으로 "이 API는 이 인증 방식을 쓴다" 선언
-                .addSecurityItem(new SecurityRequirement().addList(SECURITY_SCHEME_NAME))
-                // 2) JWT Bearer 스키마 정의
-                .components(new Components()
-                        .addSecuritySchemes(SECURITY_SCHEME_NAME,
-                                new SecurityScheme()
-                                        .name(SECURITY_SCHEME_NAME)
-                                        .type(SecurityScheme.Type.HTTP)
-                                        .scheme("bearer")
-                                        .bearerFormat("JWT")
-                        )
-                )
-                .info(new Info()
-                        .title("openSource Bravest API")
-                        .description("openSource Bravest 백엔드 API 문서")
-                        .version("v1.0.0")
-                        .license(new License().name("MIT")))
-                .externalDocs(new ExternalDocumentation().description("README"));
-    }
+  @Bean
+  public OpenAPI baseOpenAPI() {
+    return new OpenAPI()
+        // 1) 전역으로 "이 API는 이 인증 방식을 쓴다" 선언
+        .addSecurityItem(new SecurityRequirement().addList(SECURITY_SCHEME_NAME))
+        // 2) JWT Bearer 스키마 정의
+        .components(
+            new Components()
+                .addSecuritySchemes(
+                    SECURITY_SCHEME_NAME,
+                    new SecurityScheme()
+                        .name(SECURITY_SCHEME_NAME)
+                        .type(SecurityScheme.Type.HTTP)
+                        .scheme("bearer")
+                        .bearerFormat("JWT")))
+        .info(
+            new Info()
+                .title("openSource Bravest API")
+                .description("openSource Bravest 백엔드 API 문서")
+                .version("v1.0.0")
+                .license(new License().name("MIT")))
+        .externalDocs(new ExternalDocumentation().description("README"));
+  }
 }

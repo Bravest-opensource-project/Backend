@@ -1,0 +1,43 @@
+name: Java Code Style Check
+
+on:
+  pull_request:
+    branches: ['**']
+  push:
+    branches: ['**']
+  workflow_dispatch:
+
+jobs:
+  style-check:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@v3
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+
+      - name: Grant execute permission for gradlew
+        run: chmod +x gradlew
+
+      - name: Run Spotless and Checkstyle
+        run: |
+          set -e
+          ./gradlew spotlessCheck --no-daemon
+          ./gradlew checkstyleMain checkstyleTest --no-daemon
+        shell: bash
+
+      - name: Show summary
+        run: |
+          if [ $? -eq 0 ]; then
+            echo "🎉 Code style checks passed!"
+          else
+            echo "❌ Code style violations detected!"
+            echo "Please run './gradlew spotlessApply' locally and fix Checkstyle issues."
+            exit 1
+          fi
+        shell: bash

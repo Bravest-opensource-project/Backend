@@ -1,5 +1,8 @@
 package opensource.bravest.global.config;
 
+import java.io.PrintWriter;
+import java.util.ArrayList;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import opensource.bravest.global.apiPayload.code.status.ErrorStatus;
 import opensource.bravest.global.security.jwt.JwtAuthenticationFilter;
@@ -17,10 +20,6 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.*;
 
-import java.io.PrintWriter;
-import java.util.ArrayList;
-import java.util.List;
-
 @Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor
@@ -29,27 +28,30 @@ public class SecurityConfig {
   private final JwtTokenProvider jwtTokenProvider;
 
   // Swagger
-  private static final String[] SWAGGER = {
-      "/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html"
-  };
+  private static final String[] SWAGGER = {"/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html"};
 
   // 로그인/토큰 교환/리다이렉트/헬스체크 등 공개 경로
   private static final String[] PUBLIC = {
-      "/", "/actuator/health",
-      "/api/auth/**", // 카카오 코드 교환 API 등
-      "/oauth2/**",
-      "/login/**", "/login/oauth2/**",
-      "/api/test/auth/**",
-      "/rooms/**",
-      "/chatlists/**",
-      "/anonymous-profiles/**",
-      "/votes/**",
-      "/ws-connect/**", "/chat-test", "/pub/**", "/sub/**"
+    "/",
+    "/actuator/health",
+    "/api/auth/**", // 카카오 코드 교환 API 등
+    "/oauth2/**",
+    "/login/**",
+    "/login/oauth2/**",
+    "/api/test/auth/**",
+    "/rooms/**",
+    "/chatlists/**",
+    "/anonymous-profiles/**",
+    "/votes/**",
+    "/ws-connect/**",
+    "/chat-test",
+    "/pub/**",
+    "/sub/**"
   };
 
   // 정적 리소스
   private static final String[] STATIC = {
-      "/favicon.ico", "/assets/**", "/css/**", "/js/**", "/images/**"
+    "/favicon.ico", "/assets/**", "/css/**", "/js/**", "/images/**"
   };
 
   @Bean
@@ -73,37 +75,46 @@ public class SecurityConfig {
         .requestCache(cache -> cache.disable())
 
         // 권한 규칙
-        .authorizeHttpRequests(auth -> auth
-            .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll() // CORS preflight 허용
-            .requestMatchers(SWAGGER).permitAll()
-            .requestMatchers(PUBLIC).permitAll()
-            .requestMatchers(STATIC).permitAll()
-            .anyRequest().authenticated())
+        .authorizeHttpRequests(
+            auth ->
+                auth.requestMatchers(HttpMethod.OPTIONS, "/**")
+                    .permitAll() // CORS preflight 허용
+                    .requestMatchers(SWAGGER)
+                    .permitAll()
+                    .requestMatchers(PUBLIC)
+                    .permitAll()
+                    .requestMatchers(STATIC)
+                    .permitAll()
+                    .anyRequest()
+                    .authenticated())
 
         // 인증/인가 실패 공통 응답(JSON) - ApiResponse 형식
-        .exceptionHandling(ex -> ex
-            .authenticationEntryPoint((req, res, ex1) -> {
-              ErrorStatus errorStatus = ErrorStatus._UNAUTHORIZED;
-              res.setStatus(errorStatus.getReasonHttpStatus().getHttpStatus().value());
-              res.setContentType("application/json;charset=UTF-8");
-              try (PrintWriter w = res.getWriter()) {
-                w.write(String.format(
-                    "{\"isSuccess\":false,\"code\":\"%s\",\"message\":\"%s\",\"data\":null}",
-                    errorStatus.getCode(),
-                    errorStatus.getMessage()));
-              }
-            })
-            .accessDeniedHandler((req, res, ex2) -> {
-              ErrorStatus errorStatus = ErrorStatus._FORBIDDEN;
-              res.setStatus(errorStatus.getReasonHttpStatus().getHttpStatus().value());
-              res.setContentType("application/json;charset=UTF-8");
-              try (PrintWriter w = res.getWriter()) {
-                w.write(String.format(
-                    "{\"isSuccess\":false,\"code\":\"%s\",\"message\":\"%s\",\"data\":null}",
-                    errorStatus.getCode(),
-                    errorStatus.getMessage()));
-              }
-            }))
+        .exceptionHandling(
+            ex ->
+                ex.authenticationEntryPoint(
+                        (req, res, ex1) -> {
+                          ErrorStatus errorStatus = ErrorStatus._UNAUTHORIZED;
+                          res.setStatus(errorStatus.getReasonHttpStatus().getHttpStatus().value());
+                          res.setContentType("application/json;charset=UTF-8");
+                          try (PrintWriter w = res.getWriter()) {
+                            w.write(
+                                String.format(
+                                    "{\"isSuccess\":false,\"code\":\"%s\",\"message\":\"%s\",\"data\":null}",
+                                    errorStatus.getCode(), errorStatus.getMessage()));
+                          }
+                        })
+                    .accessDeniedHandler(
+                        (req, res, ex2) -> {
+                          ErrorStatus errorStatus = ErrorStatus._FORBIDDEN;
+                          res.setStatus(errorStatus.getReasonHttpStatus().getHttpStatus().value());
+                          res.setContentType("application/json;charset=UTF-8");
+                          try (PrintWriter w = res.getWriter()) {
+                            w.write(
+                                String.format(
+                                    "{\"isSuccess\":false,\"code\":\"%s\",\"message\":\"%s\",\"data\":null}",
+                                    errorStatus.getCode(), errorStatus.getMessage()));
+                          }
+                        }))
 
         // JWT 필터 등록(UsernamePasswordAuthenticationFilter 앞)
         .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
@@ -112,15 +123,15 @@ public class SecurityConfig {
   }
 
   private static void addAll(List<String> target, String[] arr) {
-    for (String s : arr)
-      target.add(s);
+    for (String s : arr) target.add(s);
   }
 
   // CORS (개발용: 필요 시 도메인 고정/축소)
   @Bean
   public CorsConfigurationSource corsConfigurationSource() {
     CorsConfiguration c = new CorsConfiguration();
-    c.setAllowedOrigins(List.of("http://localhost:3000", "http://127.0.0.1:3000", "http://localhost:5173"));
+    c.setAllowedOrigins(
+        List.of("http://localhost:3000", "http://127.0.0.1:3000", "http://localhost:5173"));
     c.setAllowedMethods(List.of("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
     c.setAllowedHeaders(List.of("*"));
     c.setExposedHeaders(List.of("Authorization", "Location"));
