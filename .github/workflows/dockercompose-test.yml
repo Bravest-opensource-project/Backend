@@ -9,7 +9,7 @@ on:
       - 'src/**'
   push:
     branches: [ main, develop ]
-    workflow_dispatch:
+  workflow_dispatch:
 
 jobs:
   docker-compose-test:
@@ -46,19 +46,19 @@ jobs:
           EOF
 
       - name: Start Docker Compose
-        run: docker-compose up -d
+        run: docker compose up -d
 
       - name: Check running containers
-        run: docker-compose ps
+        run: docker compose ps
 
       - name: Wait for services to be ready
         run: |
           echo "⏳ Waiting for MySQL to be ready..."
-          timeout 30 bash -c 'until docker-compose exec -T db mysqladmin ping -h localhost -uroot -p${{ secrets.DB_PASSWORD }} --silent 2>/dev/null; do sleep 2; done'
+          timeout 30 bash -c 'until docker compose exec -T db mysqladmin ping -h localhost -uroot -p${{ secrets.DB_PASSWORD }} --silent 2>/dev/null; do sleep 2; done'
           echo "✅ MySQL is ready!"
           
           echo "⏳ Waiting for Valkey to be ready..."
-          timeout 30 bash -c 'until docker-compose exec -T keystore valkey-cli ping 2>/dev/null | grep -q PONG; do sleep 2; done'
+          timeout 30 bash -c 'until docker compose exec -T keystore valkey-cli ping 2>/dev/null | grep -q PONG; do sleep 2; done'
           echo "✅ Valkey is ready!"
           
           echo "⏳ Waiting for application to be ready..."
@@ -79,14 +79,14 @@ jobs:
       - name: Test MySQL connection
         run: |
           echo "Testing MySQL connection..."
-          docker-compose exec -T db mysql -u${{ secrets.DB_USERNAME }} -p${{ secrets.DB_PASSWORD }} -e "SELECT 1;" && \
+          docker compose exec -T db mysql -u${{ secrets.DB_USERNAME }} -p${{ secrets.DB_PASSWORD }} -e "SELECT 1;" && \
           echo "✅ MySQL connection successful!" || \
           (echo "❌ MySQL connection failed!" && exit 1)
 
       - name: Test Valkey connection
         run: |
           echo "Testing Valkey connection..."
-          result=$(docker-compose exec -T keystore valkey-cli ping)
+          result=$(docker compose exec -T keystore valkey-cli ping)
           if [ "$result" = "PONG" ]; then
             echo "✅ Valkey connection successful!"
           else
@@ -98,15 +98,15 @@ jobs:
         if: failure()
         run: |
           echo "=== Application Logs ==="
-          docker-compose logs app
+          docker compose logs app
           echo "=== Database Logs ==="
-          docker-compose logs db
+          docker compose logs db
           echo "=== Valkey Logs ==="
-          docker-compose logs keystore
+          docker compose logs keystore
 
       - name: Stop Docker Compose
         if: always()
-        run: docker-compose down -v
+        run: docker compose down -v
 
       - name: Test Summary
         if: success()
