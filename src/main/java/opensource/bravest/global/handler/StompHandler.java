@@ -3,7 +3,7 @@ package opensource.bravest.global.handler;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import opensource.bravest.domain.profile.repository.AnonymousProfileRepository;
-import opensource.bravest.global.security.jwt.JwtTokenProvider;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.messaging.Message;
 import org.springframework.messaging.MessageChannel;
 import org.springframework.messaging.simp.stomp.StompCommand;
@@ -17,18 +17,19 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 
 import java.security.Principal;
-import java.util.Map;
-import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.List;
 
 @Slf4j
 @Component
 @RequiredArgsConstructor
 public class StompHandler implements ChannelInterceptor {
-    private final JwtTokenProvider jwtProvider;
-    private final AnonymousProfileRepository anonymousProfileRepository;
 
-    private final Map<String, Set<String>> userDestinations = new ConcurrentHashMap<>();
+    private final AnonymousProfileRepository anonymousProfileRepository;
+    private final StringRedisTemplate redisTemplate;
+
+    private static final String USER_SUB_KEY_PREFIX = "ws:subs:user:";      // + anonymousId
+    private static final String METRIC_TOTAL_SUB    = "ws:metrics:sub:total";
+    private static final String METRIC_DUP_SUB      = "ws:metrics:sub:duplicate";
 
     @Override
     public Message<?> preSend(Message<?> message, MessageChannel channel) {
@@ -40,10 +41,12 @@ public class StompHandler implements ChannelInterceptor {
         }
 
         StompCommand command = accessor.getCommand();
+
+        // 1) CONNECT: anonymousId를 Principal로 설정
         if (StompCommand.CONNECT.equals(command)) {
             String anonymousId = accessor.getFirstNativeHeader("anonymousId");
             if (anonymousId == null || anonymousId.isBlank()) {
-                log.warn("STOMP CONNECT: anonymousId 누락");
+                log.warn("STOMP CONNECT: anonymousId missing");
                 throw new IllegalArgumentException("anonymousId header is required");
             }
 
@@ -52,22 +55,20 @@ public class StompHandler implements ChannelInterceptor {
                         Authentication auth = new UsernamePasswordAuthenticationToken(
                                 anonymousId,
                                 null,
-                                java.util.List.of(new SimpleGrantedAuthority("ROLE_ANONYMOUS"))
+                                List.of(new SimpleGrantedAuthority("ROLE_ANONYMOUS"))
                         );
                         SecurityContextHolder.getContext().setAuthentication(auth);
-                        accessor.setUser(auth);  // → @MessageMapping의 Principal로 전달
-                        log.info("STOMP CONNECT: anonymousId={} Principal 설정 완료", anonymousId);}, () -> {
-                        log.warn("STOMP CONNECT: 존재하지 않는 anonymousId={}", anonymousId);
+                        accessor.setUser(auth);
+                        log.info("STOMP CONNECT: anonymousId={} principal set", anonymousId);
+                    }, () -> {
+                        log.warn("STOMP CONNECT: invalid anonymousId={}", anonymousId);
                         throw new IllegalArgumentException("Invalid anonymousId");
                     });
         }
 
+        // 2) SUBSCRIBE: Redis를 사용해 anonymousId 기준 중복 구독 방지 + 메트릭 기록
         if (StompCommand.SUBSCRIBE.equals(command)) {
-            String destination = accessor.getDestination();
             Principal user = accessor.getUser();
-
-            // CONNECT에서 setUser를 해줬다면 여기서 null이면 안 되는 게 정상이나,
-            // 혹시 모르니 한 번 더 SecurityContext에서 복구 시도
             if (user == null) {
                 Authentication auth = SecurityContextHolder.getContext().getAuthentication();
                 if (auth != null) {
@@ -76,25 +77,42 @@ public class StompHandler implements ChannelInterceptor {
                 }
             }
 
+            String destination = accessor.getDestination();
+
             if (user != null && destination != null) {
-                String userKey = user.getName(); // == anonymousId
+                String anonymousId = user.getName();
+                String key = USER_SUB_KEY_PREFIX + anonymousId;
 
-                Set<String> dests =
-                        userDestinations.computeIfAbsent(
-                                userKey,
-                                k -> ConcurrentHashMap.newKeySet()
-                        );
+                log.info("[SUBSCRIBE] handling: anonymousId={}, destination={}, key={}",
+                        anonymousId, destination, key);
 
-                if (!dests.add(destination)) {
-                    log.warn("중복 SUBSCRIBE 감지: anonymousId={}, destination={}",
-                            userKey, destination);
-                    // 이 SUBSCRIBE 프레임 자체를 무시
-                    return null;
+                try {
+                    Long total = redisTemplate.opsForValue().increment(METRIC_TOTAL_SUB);
+                    Long added = redisTemplate.opsForSet().add(key, destination);
+                    redisTemplate.expire(key, java.time.Duration.ofHours(1));
+
+                    log.info("[SUBSCRIBE] redis result: total={}, added={}", total, added);
+
+                    if (added != null && added == 0L) {
+                        Long dup = redisTemplate.opsForValue().increment(METRIC_DUP_SUB);
+                        log.warn("[SUBSCRIBE] duplicate detected: anonymousId={}, dest={}, dupCount={}",
+                                anonymousId, destination, dup);
+                        return null;
+                    }
+
+                    log.info("[SUBSCRIBE] stored in Redis: key={}, member={}", key, destination);
+
+                } catch (Exception e) {
+                    log.error("Redis error while handling SUBSCRIBE", e);
                 }
+            } else {
+                log.warn("[SUBSCRIBE] skipped: user or destination is null (user={}, dest={})",
+                        user, destination);
             }
         }
 
-        // 3) SEND에도 Principal이 비어 있으면 SecurityContext에서 복구
+
+        // 3) SEND: Principal 비어 있으면 SecurityContext에서 복구
         if (StompCommand.SEND.equals(command)) {
             Principal user = accessor.getUser();
             if (user == null) {
@@ -105,7 +123,8 @@ public class StompHandler implements ChannelInterceptor {
             }
         }
 
-        // (선택) DISCONNECT 시 userDestinations에서 정리
+        // 4) DISCONNECT: 유저별 구독 키를 정리할지 여부 (옵션)
+        //    - 전체 방 전체 유저 수가 크지 않다면 TTL만으로도 충분.
         if (StompCommand.DISCONNECT.equals(command)) {
             Principal user = accessor.getUser();
             if (user == null) {
@@ -115,21 +134,18 @@ public class StompHandler implements ChannelInterceptor {
                 }
             }
             if (user != null) {
-                String key = user.getName();
-                userDestinations.remove(key);
-                log.info("DISCONNECT: anonymousId={} 구독 정보 제거", key);
-            }
-        }
-
-        if (StompCommand.SEND.equals(command) || StompCommand.SUBSCRIBE.equals(command)) {
-            Principal user = accessor.getUser();
-            if (user == null) {
-                Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-                if (auth != null) {
-                    accessor.setUser(auth);
+                String anonymousId = user.getName();
+                String key = USER_SUB_KEY_PREFIX + anonymousId;
+                try {
+                    // 완전히 정리하고 싶으면 delete
+                    redisTemplate.delete(key);
+                    log.info("DISCONNECT: cleared subscriptions for anonymousId={}", anonymousId);
+                } catch (Exception e) {
+                    log.error("Redis error while handling DISCONNECT", e);
                 }
             }
         }
+
         return message;
     }
 }
