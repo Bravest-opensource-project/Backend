@@ -6,6 +6,6 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor
 public class CreateAnonymousProfileRequest {
-    private Long realUserId;
-    private String anonymousName;
+  private Long realUserId;
+  private String anonymousName;
 }

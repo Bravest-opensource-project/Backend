@@ -1,6 +1,5 @@
 package opensource.bravest.global.apiPayload.code.status;
 
-
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import opensource.bravest.global.apiPayload.code.BaseErrorCode;
@@ -19,7 +18,6 @@ public enum ErrorStatus implements BaseErrorCode {
   _USER_NOT_FOUND(HttpStatus.NOT_FOUND, "USER404", "사용자를 찾을 수 없습니다."),
   _CHATROOM_NOT_FOUND(HttpStatus.NOT_FOUND, "USER404", "채팅방을 찾을 수 없습니다."),
   _CHATLIST_NOT_FOUND(HttpStatus.NOT_FOUND, "USER404", "리스트를 찾을 수 없습니다."),
-
   ;
 
   private final HttpStatus httpStatus;
@@ -28,11 +26,7 @@ public enum ErrorStatus implements BaseErrorCode {
 
   @Override
   public ErrorReasonDto getReason() {
-    return ErrorReasonDto.builder()
-        .isSuccess(false)
-        .message(message)
-        .code(code)
-        .build();
+    return ErrorReasonDto.builder().isSuccess(false).message(message).code(code).build();
   }
 
   @Override
