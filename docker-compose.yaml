@@ -11,7 +11,10 @@ services:
     networks:
       - bravest-net
     depends_on:
-      - db
+      db:
+        condition: service_healthy
+      keystore:
+        condition: service_started
 
   db:
     image: mysql:8.0
@@ -24,6 +27,20 @@ services:
       - bravest-net
     environment:
       MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
+    healthcheck:
+      test: [ "CMD", "mysqladmin", "ping", "-h", "localhost", "-uroot", "-prootpw" ]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+      start_period: 10s
+
+  keystore:
+    image: valkey/valkey:9.0.0
+    container_name: bravest-keystore
+    ports:
+      - "6379:6379"
+    networks:
+      - bravest-net
 
 networks:
   bravest-net:
