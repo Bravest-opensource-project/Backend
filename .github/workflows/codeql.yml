@@ -2,9 +2,9 @@ name: "CodeQL"
 
 on:
   push:
-    branches: ["main"]
+    branches: ["main", "develop"]
   pull_request:
-    branches: ["main"]
+    branches: ["main", "develop"]
   schedule:
     - cron: '0 8 * * 0'
 
@@ -19,8 +19,6 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        # 필요한 언어를 여기에 추가하면 CodeQL이 해당 모듈까지 스캔합니다.
-        # 예) 'java', 'kotlin', 'python' 등을 쉼표로 구분해 넣으세요.
         language: ['java']
 
     steps:
@@ -37,7 +35,6 @@ jobs:
       - name: Initialize CodeQL
         uses: github/codeql-action/init@v3
         with:
-          # 바로 위 매트릭스에 정의된 언어를 그대로 사용합니다. 별도의 환경변수 설정은 필요 없습니다.
           languages: ${{ matrix.language }}
 
       - name: Autobuild
