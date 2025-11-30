@@ -7,10 +7,10 @@ import opensource.bravest.global.apiPayload.code.BaseErrorCode;
 @Getter
 public class CustomException extends RuntimeException {
 
-  private final BaseErrorCode errorCode;
+    private final BaseErrorCode errorCode;
 
-  public CustomException(BaseErrorCode errorCode) {
-    super(errorCode.getReason().getMessage());
-    this.errorCode = errorCode;
-  }
+    public CustomException(BaseErrorCode errorCode) {
+        super(errorCode.getReason().getMessage());
+        this.errorCode = errorCode;
+    }
 }

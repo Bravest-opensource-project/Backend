@@ -1,7 +1,7 @@
 package opensource.bravest.global.apiPayload.code;
 
 public interface BaseErrorCode {
-  ErrorReasonDto getReason();
+    ErrorReasonDto getReason();
 
-  ErrorReasonDto getReasonHttpStatus();
+    ErrorReasonDto getReasonHttpStatus();
 }

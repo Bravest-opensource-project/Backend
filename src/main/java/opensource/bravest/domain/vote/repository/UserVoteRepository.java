@@ -7,5 +7,5 @@ import opensource.bravest.domain.vote.entity.Vote;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface UserVoteRepository extends JpaRepository<UserVote, Long> {
-  Optional<UserVote> findByVoteAndVoter(Vote vote, AnonymousProfile voter);
+    Optional<UserVote> findByVoteAndVoter(Vote vote, AnonymousProfile voter);
 }

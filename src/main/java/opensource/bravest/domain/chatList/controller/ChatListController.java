@@ -23,37 +23,36 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class ChatListController {
 
-  private final ChatListService chatListService;
+    private final ChatListService chatListService;
 
-  @PostMapping
-  public ApiResponse<ChatListResponse> createChatList(
-      @Valid @RequestBody ChatListCreateRequest request) {
-    ChatListResponse response = chatListService.createChatList(request);
-    return ApiResponse.onSuccess(response);
-  }
+    @PostMapping
+    public ApiResponse<ChatListResponse> createChatList(@Valid @RequestBody ChatListCreateRequest request) {
+        ChatListResponse response = chatListService.createChatList(request);
+        return ApiResponse.onSuccess(response);
+    }
 
-  @GetMapping("/room/{roomId}")
-  public ApiResponse<List<ChatListResponse>> getChatListsByRoomId(@PathVariable Long roomId) {
-    List<ChatListResponse> response = chatListService.getChatListsByRoomId(roomId);
-    return ApiResponse.onSuccess(response);
-  }
+    @GetMapping("/room/{roomId}")
+    public ApiResponse<List<ChatListResponse>> getChatListsByRoomId(@PathVariable Long roomId) {
+        List<ChatListResponse> response = chatListService.getChatListsByRoomId(roomId);
+        return ApiResponse.onSuccess(response);
+    }
 
-  @GetMapping("/{id}")
-  public ApiResponse<ChatListResponse> getChatListById(@PathVariable Long id) {
-    ChatListResponse response = chatListService.getChatListById(id);
-    return ApiResponse.onSuccess(response);
-  }
+    @GetMapping("/{id}")
+    public ApiResponse<ChatListResponse> getChatListById(@PathVariable Long id) {
+        ChatListResponse response = chatListService.getChatListById(id);
+        return ApiResponse.onSuccess(response);
+    }
 
-  @PutMapping("/{id}")
-  public ApiResponse<ChatListResponse> updateChatList(
-      @PathVariable Long id, @Valid @RequestBody ChatListUpdateRequest request) {
-    ChatListResponse response = chatListService.updateChatList(id, request);
-    return ApiResponse.onSuccess(response);
-  }
+    @PutMapping("/{id}")
+    public ApiResponse<ChatListResponse> updateChatList(@PathVariable Long id,
+            @Valid @RequestBody ChatListUpdateRequest request) {
+        ChatListResponse response = chatListService.updateChatList(id, request);
+        return ApiResponse.onSuccess(response);
+    }
 
-  @DeleteMapping("/{id}")
-  public ApiResponse<Void> deleteChatList(@PathVariable Long id) {
-    chatListService.deleteChatList(id);
-    return ApiResponse.onSuccess(null);
-  }
+    @DeleteMapping("/{id}")
+    public ApiResponse<Void> deleteChatList(@PathVariable Long id) {
+        chatListService.deleteChatList(id);
+        return ApiResponse.onSuccess(null);
+    }
 }

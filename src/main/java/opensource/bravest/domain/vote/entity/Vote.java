@@ -14,26 +14,26 @@ import opensource.bravest.domain.room.entity.AnonymousRoom;
 @Builder
 public class Vote {
 
-  @Id
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
-  private Long id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
-  @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "room_id", nullable = false)
-  private AnonymousRoom room;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "room_id", nullable = false)
+    private AnonymousRoom room;
 
-  @Column(nullable = false, length = 100)
-  private String title;
+    @Column(nullable = false, length = 100)
+    private String title;
 
-  @Builder.Default
-  @OneToMany(mappedBy = "vote", cascade = CascadeType.ALL, orphanRemoval = true)
-  private List<VoteOption> options = new ArrayList<>();
+    @Builder.Default
+    @OneToMany(mappedBy = "vote", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<VoteOption> options = new ArrayList<>();
 
-  private boolean isActive;
+    private boolean isActive;
 
-  private LocalDateTime createdAt;
+    private LocalDateTime createdAt;
 
-  public void endVote() {
-    this.isActive = false;
-  }
+    public void endVote() {
+        this.isActive = false;
+    }
 }

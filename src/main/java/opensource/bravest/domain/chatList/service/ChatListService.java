@@ -25,55 +25,48 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional(readOnly = true)
 public class ChatListService {
 
-  private final ChatListRepository chatListRepository;
-  private final AnonymousRoomRepository anonymousRoomRepository;
-  private final AnonymousProfileRepository anonymousProfileRepository;
+    private final ChatListRepository chatListRepository;
+    private final AnonymousRoomRepository anonymousRoomRepository;
+    private final AnonymousProfileRepository anonymousProfileRepository;
 
-  @Transactional
-  public ChatListResponse createChatList(ChatListCreateRequest request) {
-    AnonymousRoom room =
-        anonymousRoomRepository
-            .findById(request.getRoomId())
-            .orElseThrow(() -> new CustomException(_CHATROOM_NOT_FOUND));
+    @Transactional
+    public ChatListResponse createChatList(ChatListCreateRequest request) {
+        AnonymousRoom room = anonymousRoomRepository.findById(request.getRoomId())
+                .orElseThrow(() -> new CustomException(_CHATROOM_NOT_FOUND));
 
-    AnonymousProfile profile =
-        anonymousProfileRepository
-            .findById(request.getRegisteredBy())
-            .orElseThrow(() -> new CustomException(_USER_NOT_FOUND));
+        AnonymousProfile profile = anonymousProfileRepository.findById(request.getRegisteredBy())
+                .orElseThrow(() -> new CustomException(_USER_NOT_FOUND));
 
-    ChatList chatList =
-        ChatList.builder().room(room).registeredBy(profile).content(request.getContent()).build();
+        ChatList chatList = ChatList.builder().room(room).registeredBy(profile).content(request.getContent()).build();
 
-    ChatList savedList = chatListRepository.save(chatList);
-    return ChatListResponse.fromEntity(savedList);
-  }
-
-  public List<ChatListResponse> getChatListsByRoomId(Long roomId) {
-    List<ChatList> chatLists = chatListRepository.findAllByRoomId(roomId);
-    return chatLists.stream().map(ChatListResponse::fromEntity).collect(Collectors.toList());
-  }
-
-  public ChatListResponse getChatListById(Long id) {
-    ChatList chatList =
-        chatListRepository.findById(id).orElseThrow(() -> new CustomException(_CHATLIST_NOT_FOUND));
-    return ChatListResponse.fromEntity(chatList);
-  }
-
-  @Transactional
-  public ChatListResponse updateChatList(Long id, ChatListUpdateRequest request) {
-    ChatList chatList =
-        chatListRepository.findById(id).orElseThrow(() -> new CustomException(_CHATLIST_NOT_FOUND));
-
-    chatList.updateContent(request.getContent());
-
-    return ChatListResponse.fromEntity(chatList);
-  }
-
-  @Transactional
-  public void deleteChatList(Long id) {
-    if (!chatListRepository.existsById(id)) {
-      throw new CustomException(_CHATLIST_NOT_FOUND);
+        ChatList savedList = chatListRepository.save(chatList);
+        return ChatListResponse.fromEntity(savedList);
     }
-    chatListRepository.deleteById(id);
-  }
+
+    public List<ChatListResponse> getChatListsByRoomId(Long roomId) {
+        List<ChatList> chatLists = chatListRepository.findAllByRoomId(roomId);
+        return chatLists.stream().map(ChatListResponse::fromEntity).collect(Collectors.toList());
+    }
+
+    public ChatListResponse getChatListById(Long id) {
+        ChatList chatList = chatListRepository.findById(id).orElseThrow(() -> new CustomException(_CHATLIST_NOT_FOUND));
+        return ChatListResponse.fromEntity(chatList);
+    }
+
+    @Transactional
+    public ChatListResponse updateChatList(Long id, ChatListUpdateRequest request) {
+        ChatList chatList = chatListRepository.findById(id).orElseThrow(() -> new CustomException(_CHATLIST_NOT_FOUND));
+
+        chatList.updateContent(request.getContent());
+
+        return ChatListResponse.fromEntity(chatList);
+    }
+
+    @Transactional
+    public void deleteChatList(Long id) {
+        if (!chatListRepository.existsById(id)) {
+            throw new CustomException(_CHATLIST_NOT_FOUND);
+        }
+        chatListRepository.deleteById(id);
+    }
 }

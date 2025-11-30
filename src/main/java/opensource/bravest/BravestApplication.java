@@ -6,7 +6,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 @SpringBootApplication
 public class BravestApplication {
 
-  public static void main(String[] args) {
-    SpringApplication.run(BravestApplication.class, args);
-  }
+    public static void main(String[] args) {
+        SpringApplication.run(BravestApplication.class, args);
+    }
 }

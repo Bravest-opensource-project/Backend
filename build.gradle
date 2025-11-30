@@ -85,7 +85,14 @@ apply plugin: 'com.diffplug.spotless'
 
 spotless {
 	java {
-		googleJavaFormat()
 		target 'src/**/*.java'
+
+		// Checkstyle XML 규칙을 완전히 재현할 수는 없지만, 기본 규칙 적용
+		// 들여쓰기 4칸, 중괄호 스타일, 라인 길이 제한
+		eclipse().configFile 'config/checkstyle/checkstyle_eclipse_format.xml'
+
+		// 혹은 Google Java Format 사용
+		// googleJavaFormat('1.16.0')
 	}
+
 }
