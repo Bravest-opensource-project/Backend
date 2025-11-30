@@ -14,6 +14,12 @@ spring:
         show_sql: true
         dialect: org.hibernate.dialect.MySQLDialect
 
+  data:
+    redis:
+      host: bravest-keystore
+      port: 6379
+      database: 0
+
 server:
   port: 8080
   servlet:
