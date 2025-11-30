@@ -77,9 +77,12 @@ jobs:
           fi
 
       - name: Test MySQL connection
+        env:
+          DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+          DB_USERNAME: ${{ secrets.DB_USERNAME }}
         run: |
           echo "Testing MySQL connection..."
-          docker compose exec -T db mysql -u${{ secrets.DB_USERNAME }} -p${{ secrets.DB_PASSWORD }} -e "SELECT 1;" && \
+          docker compose exec -T db mysql -u"$DB_USERNAME" -p"$DB_PASSWORD" -e "SELECT 1;" && \
           echo "✅ MySQL connection successful!" || \
           (echo "❌ MySQL connection failed!" && exit 1)
 
