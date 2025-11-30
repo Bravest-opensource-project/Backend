@@ -26,7 +26,7 @@ services:
     networks:
       - bravest-net
     environment:
-      MYSQL_DATABASE: bravest
+      MYSQL_DATABASE: db
       MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
     healthcheck:
       test: [ "CMD", "mysqladmin", "ping", "-h", "localhost", "-uroot", "-prootpw" ]
