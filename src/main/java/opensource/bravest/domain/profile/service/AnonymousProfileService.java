@@ -21,17 +21,17 @@ public class AnonymousProfileService {
     @Transactional
     public AnonymousProfile createAnonymousProfile(Long roomId, CreateAnonymousProfileRequest request) {
         AnonymousRoom room = anonymousRoomRepository.findById(roomId)
-                .orElseThrow(() -> new RuntimeException("방을 찾을 수 없음.뿡"));
+                        .orElseThrow(() -> new RuntimeException("방을 찾을 수 없음.뿡"));
 
         // 중복 프로필 체크
         Optional<AnonymousProfile> existingProfile = anonymousProfileRepository.findByRoomAndRealUserId(room,
-                request.getRealUserId());
+                        request.getRealUserId());
         if (existingProfile.isPresent()) {
             throw new RuntimeException("이미 방에 존재하는 유저임. 다른걸로 접속하셈.");
         }
 
         AnonymousProfile newProfile = AnonymousProfile.builder().room(room).realUserId(request.getRealUserId())
-                .anonymousName(request.getAnonymousName()).build();
+                        .anonymousName(request.getAnonymousName()).build();
 
         return anonymousProfileRepository.save(newProfile);
     }

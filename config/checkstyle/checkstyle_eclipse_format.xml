@@ -1,26 +1,42 @@
-<?xml version="1.0" encoding="UTF-8"?>
-
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <profiles version="12">
-    <profile kind="CodeFormatterProfile" name="CheckstyleLike" version="12">
-        <!-- 탭/공백 설정: 들여쓰기 4칸, 스페이스 사용 -->
+    <profile kind="CodeFormatterProfile" name="CheckstyleCompliant_v3" version="12">
+
         <setting id="org.eclipse.jdt.core.formatter.tabulation.char" value="space"/>
         <setting id="org.eclipse.jdt.core.formatter.tabulation.size" value="4"/>
         <setting id="org.eclipse.jdt.core.formatter.indentation.size" value="4"/>
-
-        ```
-        <!-- 한 줄 최대 길이 -->
         <setting id="org.eclipse.jdt.core.formatter.lineSplit" value="120"/>
 
-        <!-- 클래스/메소드/블록 중괄호 위치 -->
+        <setting id="org.eclipse.jdt.core.formatter.continuation_indentation" value="4"/>
+        <setting id="org.eclipse.jdt.core.formatter.continuation_indentation_for_array_initializer" value="4"/>
+
+        <setting id="org.eclipse.jdt.core.formatter.alignment_for_expressions_in_array_initializer" value="16"/>
+
+        <setting id="org.eclipse.jdt.core.formatter.insert_space_between_empty_braces_in_type_declaration" value="insert"/>
+        <setting id="org.eclipse.jdt.core.formatter.insert_space_between_empty_braces_in_method_declaration" value="insert"/>
+        <setting id="org.eclipse.jdt.core.formatter.insert_space_between_empty_braces_in_enum_constant" value="insert"/>
+        <setting id="org.eclipse.jdt.core.formatter.insert_space_between_empty_braces_in_array_initializer" value="insert"/>
+
+        <setting id="org.eclipse.jdt.core.formatter.insert_new_line_in_empty_type_declaration" value="false"/>
+        <setting id="org.eclipse.jdt.core.formatter.insert_new_line_in_empty_method_body" value="false"/>
+        <setting id="org.eclipse.jdt.core.formatter.insert_new_line_in_empty_block" value="false"/>
+
         <setting id="org.eclipse.jdt.core.formatter.brace_position_for_type_declaration" value="end_of_line"/>
+
         <setting id="org.eclipse.jdt.core.formatter.brace_position_for_method_declaration" value="end_of_line"/>
         <setting id="org.eclipse.jdt.core.formatter.brace_position_for_constructor_declaration" value="end_of_line"/>
         <setting id="org.eclipse.jdt.core.formatter.brace_position_for_block" value="end_of_line"/>
+        <setting id="org.eclipse.jdt.core.formatter.brace_position_for_switch" value="end_of_line"/>
+        <setting id="org.eclipse.jdt.core.formatter.brace_position_for_lambda_body" value="end_of_line"/>
 
-        <!-- 빈 타입, 메소드 블록에서 줄바꿈 -->
-        <setting id="org.eclipse.jdt.core.formatter.insert_new_line_in_empty_type_declaration" value="true"/>
-        <setting id="org.eclipse.jdt.core.formatter.insert_new_line_in_empty_method_body" value="true"/>
+        <setting id="org.eclipse.jdt.core.formatter.insert_space_after_comma_in_method_invocation_arguments" value="insert"/>
+        <setting id="org.eclipse.jdt.core.formatter.insert_space_after_comma_in_method_declaration_parameters" value="insert"/>
+        <setting id="org.eclipse.jdt.core.formatter.insert_space_before_opening_brace_in_type_declaration" value="insert"/>
+        <setting id="org.eclipse.jdt.core.formatter.insert_space_before_opening_brace_in_method_declaration" value="insert"/>
+        <setting id="org.eclipse.jdt.core.formatter.insert_space_before_opening_brace_in_block" value="insert"/>
+        <setting id="org.eclipse.jdt.core.formatter.insert_space_around_assignment_operator" value="insert"/>
+        <setting id="org.eclipse.jdt.core.formatter.insert_space_around_binary_operator" value="insert"/>
+
+        <setting id="org.eclipse.jdt.core.formatter.comment.line_length" value="120"/>
     </profile>
-    ```
-
 </profiles>

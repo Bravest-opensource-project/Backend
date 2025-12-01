@@ -4,35 +4,43 @@
         "https://checkstyle.org/dtds/configuration_1_3.dtd">
 
 <module name="Checker">
-    <!-- 공통 규칙 적용 -->
+    <property name="charset" value="UTF-8"/>
+
+    <module name="FileLength">
+        <property name="max" value="3000"/>
+    </module>
+
+    <module name="FileTabCharacter">
+        <property name="eachLine" value="true"/>
+    </module>
+
+    <module name="LineLength">
+        <property name="max" value="200"/>
+    </module>
+
     <module name="TreeWalker">
-        <!-- 클래스/인터페이스 이름은 대문자로 시작 -->
-        <module name="TypeName"/>
+        <module name="WhitespaceAfter"/>
 
-        <!-- 메소드 이름은 소문자로 시작, camelCase -->
-        <module name="MethodName"/>
-
-        <!-- 변수 이름은 소문자로 시작, camelCase -->
-        <module name="LocalVariableName"/>
-
-        <!-- 들여쓰기: 4칸 -->
         <module name="Indentation">
             <property name="basicOffset" value="4"/>
-            <property name="tabWidth" value="4"/>
             <property name="braceAdjustment" value="0"/>
+            <property name="caseIndent" value="4"/>
+            <property name="tabWidth" value="4"/>
+            <property name="arrayInitIndent" value="16"/>
         </module>
 
-        <!-- 한 줄 최대 길이 제한 -->
-        <module name="LineLength">
-            <property name="max" value="120"/>
-        </module>
+        <module name="UnusedImports"/>
 
-        <!-- 중괄호 스타일 체크 -->
-        <module name="LeftCurly">
-            <property name="option" value="eol"/>
-        </module>
-        <module name="RightCurly">
-            <property name="option" value="alone"/>
-        </module>
+        <module name="TypeName"/>
+        <module name="MethodName"/>
+        <module name="ParameterName"/>
+        <module name="LocalVariableName"/>
+        <module name="MemberName"/>
+
+        <module name="LeftCurly"/>
+        <module name="RightCurly"/>
+
+        <module name="EmptyStatement"/>
+        <module name="FallThrough"/>
     </module>
 </module>

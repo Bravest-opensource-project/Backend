@@ -30,10 +30,10 @@ public class ChatMessageService {
         AnonymousProfile sender = memberRepository.findById(id).orElseThrow(() -> new CustomException(_USER_NOT_FOUND));
 
         AnonymousRoom chatRoom = chatRoomRepository.findById(request.getChatRoomId())
-                .orElseThrow(() -> new CustomException(_CHATROOM_NOT_FOUND));
+                        .orElseThrow(() -> new CustomException(_CHATROOM_NOT_FOUND));
 
         ChatMessage chatMessage = ChatMessage.builder().room(chatRoom).sender(sender).content(request.getContent())
-                .build();
+                        .build();
 
         chatMessageRepository.save(chatMessage);
 
@@ -43,7 +43,7 @@ public class ChatMessageService {
     @Transactional
     public void readMessages(Long chatRoomId, Long memberId) {
         AnonymousRoom chatRoom = chatRoomRepository.findById(chatRoomId)
-                .orElseThrow(() -> new CustomException(_CHATROOM_NOT_FOUND));
+                        .orElseThrow(() -> new CustomException(_CHATROOM_NOT_FOUND));
 
         // if (!Objects.equals(chatRoom.getMember1().getId(), memberId) &&
         // !Objects.equals(chatRoom.getMember2().getId(),

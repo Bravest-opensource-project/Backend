@@ -15,7 +15,7 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ApiResponse<Object>> handleCustomException(CustomException e) {
         log.warn("CustomException: {}", e.getMessage());
         return ResponseEntity.status(e.getErrorCode().getReasonHttpStatus().getHttpStatus())
-                .body(ApiResponse.onFailure(e.getErrorCode(), null));
+                        .body(ApiResponse.onFailure(e.getErrorCode(), null));
     }
 
     @ExceptionHandler(RuntimeException.class)
@@ -27,26 +27,26 @@ public class GlobalExceptionHandler {
             if (message.contains("유효하지 않은 초대 코드") || message.contains("가족을 찾을 수 없습니다")) {
                 log.warn("Family not found: {}", message);
                 return ResponseEntity.status(ErrorStatus._FAMILY_NOT_FOUND.getReasonHttpStatus().getHttpStatus())
-                        .body(ApiResponse.onFailure(ErrorStatus._FAMILY_NOT_FOUND, null));
+                                .body(ApiResponse.onFailure(ErrorStatus._FAMILY_NOT_FOUND, null));
             }
 
             if (message.contains("사용자를 찾을 수 없습니다")) {
                 log.warn("User not found: {}", message);
                 return ResponseEntity.status(ErrorStatus._USER_NOT_FOUND.getReasonHttpStatus().getHttpStatus())
-                        .body(ApiResponse.onFailure(ErrorStatus._USER_NOT_FOUND, null));
+                                .body(ApiResponse.onFailure(ErrorStatus._USER_NOT_FOUND, null));
             }
         }
 
         // 기본값: 500 Internal Server Error
         log.error("RuntimeException: ", e);
         return ResponseEntity.status(ErrorStatus._INTERNAL_SERVER_ERROR.getReasonHttpStatus().getHttpStatus())
-                .body(ApiResponse.onFailure(ErrorStatus._INTERNAL_SERVER_ERROR, null));
+                        .body(ApiResponse.onFailure(ErrorStatus._INTERNAL_SERVER_ERROR, null));
     }
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ApiResponse<Object>> handleException(Exception e) {
         log.error("Unexpected exception: ", e);
         return ResponseEntity.status(ErrorStatus._INTERNAL_SERVER_ERROR.getReasonHttpStatus().getHttpStatus())
-                .body(ApiResponse.onFailure(ErrorStatus._INTERNAL_SERVER_ERROR, null));
+                        .body(ApiResponse.onFailure(ErrorStatus._INTERNAL_SERVER_ERROR, null));
     }
 }

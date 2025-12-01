@@ -15,6 +15,6 @@ public class AnonymousProfileResponse {
 
     public static AnonymousProfileResponse from(AnonymousProfile profile) {
         return AnonymousProfileResponse.builder().id(profile.getId()).roomId(profile.getRoom().getId())
-                .nickname(profile.getAnonymousName()).build();
+                        .nickname(profile.getAnonymousName()).build();
     }
 }

@@ -20,7 +20,7 @@ public class AnonymousProfileController {
     @Operation(summary = "익명 프로필 생성", description = "특정 채팅방에 대한 새로운 익명 프로필을 생성합니다.")
     @PostMapping("/rooms/{roomId}")
     public ApiResponse<AnonymousProfileResponse> createAnonymousProfile(@PathVariable Long roomId,
-            @RequestBody CreateAnonymousProfileRequest request) {
+                    @RequestBody CreateAnonymousProfileRequest request) {
         AnonymousProfile profile = anonymousProfileService.createAnonymousProfile(roomId, request);
         AnonymousProfileResponse response = AnonymousProfileResponse.from(profile);
         return ApiResponse.of(SuccessStatus._CREATED, SuccessStatus._CREATED.getMessage(), response);

@@ -28,6 +28,6 @@ public class ChatMessageController {
 
         // 특정 채팅방 구독자들에게 메시지 전송
         messagingTemplate.convertAndSend("/subs/chat-rooms/" + request.getChatRoomId(),
-                ApiResponse.onSuccess(response));
+                        ApiResponse.onSuccess(response));
     }
 }

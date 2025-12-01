@@ -16,8 +16,8 @@ import org.springframework.util.AntPathMatcher;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 /**
- * JWT가 필요한 보호 경로에만 동작하도록 만든 필터. - 화이트리스트(permitAll) 경로와 OPTIONS 프리플라이트는 필터를
- * 건너뜀. - 토큰이 유효하면 SecurityContext 설정, 아니면 체인 진행 (401은 EntryPoint가 처리)
+ * JWT가 필요한 보호 경로에만 동작하도록 만든 필터. - 화이트리스트(permitAll) 경로와 OPTIONS 프리플라이트는 필터를 건너뜀. - 토큰이 유효하면 SecurityContext 설정, 아니면 체인
+ * 진행 (401은 EntryPoint가 처리)
  */
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
@@ -47,7 +47,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
-            throws ServletException, IOException {
+                    throws ServletException, IOException {
 
         String header = request.getHeader(HttpHeaders.AUTHORIZATION);
 

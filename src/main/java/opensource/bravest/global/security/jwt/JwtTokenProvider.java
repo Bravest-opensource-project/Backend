@@ -48,18 +48,18 @@ public class JwtTokenProvider {
     public String createAccessToken(String subject, Map<String, Object> claims) {
         Instant now = Instant.now();
         return Jwts.builder().subject(subject).claims(claims).issuedAt(Date.from(now))
-                .expiration(Date.from(now.plusSeconds(accessValidity))).signWith(key).compact();
+                        .expiration(Date.from(now.plusSeconds(accessValidity))).signWith(key).compact();
     }
 
     public String createRefreshToken(String subject) {
         Instant now = Instant.now();
         return Jwts.builder().subject(subject).issuedAt(Date.from(now))
-                .expiration(Date.from(now.plusSeconds(refreshValidity))).signWith(key).compact();
+                        .expiration(Date.from(now.plusSeconds(refreshValidity))).signWith(key).compact();
     }
 
     public Long getIdFromToken(String token) {
         Claims claims = Jwts.parser().verifyWith(key) // init()에서 만든 key 재사용
-                .build().parseSignedClaims(token).getPayload();
+                        .build().parseSignedClaims(token).getPayload();
 
         return claims.get("id", Long.class);
     }

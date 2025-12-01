@@ -20,7 +20,7 @@ public class RoomService {
     public AnonymousRoom createRoom(RoomDto.CreateRoomRequest request) {
         String roomCode = generateUniqueRoomCode();
         AnonymousRoom room = AnonymousRoom.builder().title(request.getTitle()).roomCode(roomCode)
-                .createdAt(LocalDateTime.now()).build();
+                        .createdAt(LocalDateTime.now()).build();
         return anonymousRoomRepository.save(room);
     }
 
@@ -50,7 +50,7 @@ public class RoomService {
 
     public AnonymousRoom joinRoom(String roomCode) {
         return anonymousRoomRepository.findByRoomCode(roomCode)
-                .orElseThrow(() -> new RuntimeException("Room not found with code: " + roomCode));
+                        .orElseThrow(() -> new RuntimeException("Room not found with code: " + roomCode));
     }
 
     private String generateUniqueRoomCode() {

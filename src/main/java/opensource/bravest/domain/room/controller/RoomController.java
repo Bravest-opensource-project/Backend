@@ -21,8 +21,8 @@ public class RoomController {
     public ApiResponse<RoomDto.RoomResponse> createRoom(@RequestBody RoomDto.CreateRoomRequest request) {
         AnonymousRoom room = roomService.createRoom(request);
         return ApiResponse.of(SuccessStatus._CREATED, SuccessStatus._CREATED.getMessage(),
-                RoomDto.RoomResponse.builder().id(room.getId()).roomCode(room.getRoomCode()).title(room.getTitle())
-                        .createdAt(room.getCreatedAt()).build());
+                        RoomDto.RoomResponse.builder().id(room.getId()).roomCode(room.getRoomCode())
+                                        .title(room.getTitle()).createdAt(room.getCreatedAt()).build());
     }
 
     @GetMapping("/{roomId}")
@@ -30,18 +30,18 @@ public class RoomController {
     public ApiResponse<RoomDto.RoomResponse> getRoom(@PathVariable Long roomId) {
         AnonymousRoom room = roomService.getRoom(roomId);
         return ApiResponse.of(SuccessStatus._OK, SuccessStatus._OK.getMessage(),
-                RoomDto.RoomResponse.builder().id(room.getId()).roomCode(room.getRoomCode()).title(room.getTitle())
-                        .createdAt(room.getCreatedAt()).build());
+                        RoomDto.RoomResponse.builder().id(room.getId()).roomCode(room.getRoomCode())
+                                        .title(room.getTitle()).createdAt(room.getCreatedAt()).build());
     }
 
     @PutMapping("/{roomId}")
     @Operation(summary = "채팅방 정보 수정", description = "ID로 특정 채팅방의 정보를 수정합니다.")
     public ApiResponse<RoomDto.RoomResponse> updateRoom(@PathVariable Long roomId,
-            @RequestBody RoomDto.UpdateRoomRequest request) {
+                    @RequestBody RoomDto.UpdateRoomRequest request) {
         AnonymousRoom room = roomService.updateRoom(roomId, request);
         return ApiResponse.of(SuccessStatus._OK, SuccessStatus._OK.getMessage(),
-                RoomDto.RoomResponse.builder().id(room.getId()).roomCode(room.getRoomCode()).title(room.getTitle())
-                        .createdAt(room.getCreatedAt()).build());
+                        RoomDto.RoomResponse.builder().id(room.getId()).roomCode(room.getRoomCode())
+                                        .title(room.getTitle()).createdAt(room.getCreatedAt()).build());
     }
 
     @DeleteMapping("/{roomId}")
@@ -63,7 +63,7 @@ public class RoomController {
     public ApiResponse<RoomDto.RoomResponse> joinRoom(@RequestBody RoomDto.JoinRoomRequest request) {
         AnonymousRoom room = roomService.joinRoom(request.getRoomCode());
         return ApiResponse.of(SuccessStatus._OK, SuccessStatus._OK.getMessage(),
-                RoomDto.RoomResponse.builder().id(room.getId()).roomCode(room.getRoomCode()).title(room.getTitle())
-                        .createdAt(room.getCreatedAt()).build());
+                        RoomDto.RoomResponse.builder().id(room.getId()).roomCode(room.getRoomCode())
+                                        .title(room.getTitle()).createdAt(room.getCreatedAt()).build());
     }
 }

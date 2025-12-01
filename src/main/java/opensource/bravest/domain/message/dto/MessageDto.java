@@ -21,7 +21,7 @@ public class MessageDto {
 
         public static MessageResponse from(ChatMessage chatMessage) {
             return new MessageResponse(chatMessage.getSender().getAnonymousName(), chatMessage.getContent(),
-                    chatMessage.getCreatedAt());
+                            chatMessage.getCreatedAt());
         }
     }
 

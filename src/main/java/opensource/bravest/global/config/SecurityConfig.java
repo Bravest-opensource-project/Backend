@@ -32,8 +32,8 @@ public class SecurityConfig {
 
     // 로그인/토큰 교환/리다이렉트/헬스체크 등 공개 경로
     private static final String[] PUBLIC = {"/", "/actuator/health", "/api/auth/**", // 카카오 코드 교환 API 등
-            "/oauth2/**", "/login/**", "/login/oauth2/**", "/api/test/auth/**", "/rooms/**", "/chatlists/**",
-            "/anonymous-profiles/**", "/votes/**", "/ws-connect/**", "/chat-test", "/pub/**", "/sub/**"};
+                    "/oauth2/**", "/login/**", "/login/oauth2/**", "/api/test/auth/**", "/rooms/**", "/chatlists/**",
+                    "/anonymous-profiles/**", "/votes/**", "/ws-connect/**", "/chat-test", "/pub/**", "/sub/**"};
 
     // 정적 리소스
     private static final String[] STATIC = {"/favicon.ico", "/assets/**", "/css/**", "/js/**", "/images/**"};
@@ -49,40 +49,42 @@ public class SecurityConfig {
         JwtAuthenticationFilter jwtFilter = new JwtAuthenticationFilter(jwtTokenProvider, skip);
 
         http
-                // REST API 기본 세팅
-                .csrf(csrf -> csrf.disable()).cors(Customizer.withDefaults())
-                .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .httpBasic(basic -> basic.disable()).formLogin(form -> form.disable()).logout(lo -> lo.disable())
-                .requestCache(cache -> cache.disable())
+                        // REST API 기본 세팅
+                        .csrf(csrf -> csrf.disable()).cors(Customizer.withDefaults())
+                        .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                        .httpBasic(basic -> basic.disable()).formLogin(form -> form.disable())
+                        .logout(lo -> lo.disable()).requestCache(cache -> cache.disable())
 
-                // 권한 규칙
-                .authorizeHttpRequests(auth -> auth.requestMatchers(HttpMethod.OPTIONS, "/**").permitAll() // CORS
-                                                                                                           // preflight
-                                                                                                           // 허용
-                        .requestMatchers(SWAGGER).permitAll().requestMatchers(PUBLIC).permitAll()
-                        .requestMatchers(STATIC).permitAll().anyRequest().authenticated())
+                        // 권한 규칙
+                        .authorizeHttpRequests(auth -> auth.requestMatchers(HttpMethod.OPTIONS, "/**").permitAll() // CORS
+                                        // preflight
+                                        // 허용
+                                        .requestMatchers(SWAGGER).permitAll().requestMatchers(PUBLIC).permitAll()
+                                        .requestMatchers(STATIC).permitAll().anyRequest().authenticated())
 
-                // 인증/인가 실패 공통 응답(JSON) - ApiResponse 형식
-                .exceptionHandling(ex -> ex.authenticationEntryPoint((req, res, ex1) -> {
-                    ErrorStatus errorStatus = ErrorStatus._UNAUTHORIZED;
-                    res.setStatus(errorStatus.getReasonHttpStatus().getHttpStatus().value());
-                    res.setContentType("application/json;charset=UTF-8");
-                    try (PrintWriter w = res.getWriter()) {
-                        w.write(String.format("{\"isSuccess\":false,\"code\":\"%s\",\"message\":\"%s\",\"data\":null}",
-                                errorStatus.getCode(), errorStatus.getMessage()));
-                    }
-                }).accessDeniedHandler((req, res, ex2) -> {
-                    ErrorStatus errorStatus = ErrorStatus._FORBIDDEN;
-                    res.setStatus(errorStatus.getReasonHttpStatus().getHttpStatus().value());
-                    res.setContentType("application/json;charset=UTF-8");
-                    try (PrintWriter w = res.getWriter()) {
-                        w.write(String.format("{\"isSuccess\":false,\"code\":\"%s\",\"message\":\"%s\",\"data\":null}",
-                                errorStatus.getCode(), errorStatus.getMessage()));
-                    }
-                }))
+                        // 인증/인가 실패 공통 응답(JSON) - ApiResponse 형식
+                        .exceptionHandling(ex -> ex.authenticationEntryPoint((req, res, ex1) -> {
+                            ErrorStatus errorStatus = ErrorStatus._UNAUTHORIZED;
+                            res.setStatus(errorStatus.getReasonHttpStatus().getHttpStatus().value());
+                            res.setContentType("application/json;charset=UTF-8");
+                            try (PrintWriter w = res.getWriter()) {
+                                w.write(String.format(
+                                                "{\"isSuccess\":false,\"code\":\"%s\",\"message\":\"%s\",\"data\":null}",
+                                                errorStatus.getCode(), errorStatus.getMessage()));
+                            }
+                        }).accessDeniedHandler((req, res, ex2) -> {
+                            ErrorStatus errorStatus = ErrorStatus._FORBIDDEN;
+                            res.setStatus(errorStatus.getReasonHttpStatus().getHttpStatus().value());
+                            res.setContentType("application/json;charset=UTF-8");
+                            try (PrintWriter w = res.getWriter()) {
+                                w.write(String.format(
+                                                "{\"isSuccess\":false,\"code\":\"%s\",\"message\":\"%s\",\"data\":null}",
+                                                errorStatus.getCode(), errorStatus.getMessage()));
+                            }
+                        }))
 
-                // JWT 필터 등록(UsernamePasswordAuthenticationFilter 앞)
-                .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
+                        // JWT 필터 등록(UsernamePasswordAuthenticationFilter 앞)
+                        .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }

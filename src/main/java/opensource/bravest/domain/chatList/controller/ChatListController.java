@@ -45,7 +45,7 @@ public class ChatListController {
 
     @PutMapping("/{id}")
     public ApiResponse<ChatListResponse> updateChatList(@PathVariable Long id,
-            @Valid @RequestBody ChatListUpdateRequest request) {
+                    @Valid @RequestBody ChatListUpdateRequest request) {
         ChatListResponse response = chatListService.updateChatList(id, request);
         return ApiResponse.onSuccess(response);
     }

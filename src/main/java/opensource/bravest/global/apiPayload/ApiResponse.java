@@ -29,7 +29,7 @@ public class ApiResponse<T> {
 
     public static <T> ApiResponse<T> of(BaseCode code, String message, T data) {
         return new ApiResponse<>(true, code.getReasonHttpStatus().getCode(), code.getReasonHttpStatus().getMessage(),
-                data);
+                        data);
     }
 
     public static <T> ApiResponse<T> onFailure(BaseErrorCode errorCode, T data) {

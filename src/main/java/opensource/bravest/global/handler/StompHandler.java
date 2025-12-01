@@ -50,7 +50,7 @@ public class StompHandler implements ChannelInterceptor {
 
             anonymousProfileRepository.findById(Long.valueOf(anonymousId)).ifPresentOrElse(member -> {
                 Authentication auth = new UsernamePasswordAuthenticationToken(anonymousId, null,
-                        List.of(new SimpleGrantedAuthority("ROLE_ANONYMOUS")));
+                                List.of(new SimpleGrantedAuthority("ROLE_ANONYMOUS")));
                 SecurityContextHolder.getContext().setAuthentication(auth);
                 accessor.setUser(auth);
                 log.info("STOMP CONNECT: anonymousId={} principal set", anonymousId);
@@ -89,7 +89,7 @@ public class StompHandler implements ChannelInterceptor {
                     if (added != null && added == 0L) {
                         Long dup = redisTemplate.opsForValue().increment(METRIC_DUP_SUB);
                         log.warn("[SUBSCRIBE] duplicate detected: anonymousId={}, dest={}, dupCount={}", anonymousId,
-                                destination, dup);
+                                        destination, dup);
                         return null;
                     }
 

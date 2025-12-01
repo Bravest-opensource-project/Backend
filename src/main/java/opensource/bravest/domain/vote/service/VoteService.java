@@ -30,14 +30,14 @@ public class VoteService {
     @Transactional
     public Vote createVote(VoteDto.CreateVoteRequest request) {
         AnonymousRoom room = anonymousRoomRepository.findById(request.getRoomId())
-                .orElseThrow(() -> new RuntimeException("Room not found"));
+                        .orElseThrow(() -> new RuntimeException("Room not found"));
 
         Vote vote = Vote.builder().room(room).title(room.getTitle()).isActive(true).createdAt(LocalDateTime.now())
-                .build();
+                        .build();
 
         List<VoteOption> options = request.getMessages().stream()
-                .map(message -> VoteOption.builder().vote(vote).messageContent(message).voteCount(0).build())
-                .collect(Collectors.toList());
+                        .map(message -> VoteOption.builder().vote(vote).messageContent(message).voteCount(0).build())
+                        .collect(Collectors.toList());
 
         vote.getOptions().addAll(options);
 
@@ -52,15 +52,15 @@ public class VoteService {
         }
 
         AnonymousProfile voter = anonymousProfileRepository.findById(request.getAnonymousProfileId())
-                .orElseThrow(() -> new RuntimeException("AnonymousProfile not found"));
+                        .orElseThrow(() -> new RuntimeException("AnonymousProfile not found"));
 
         if (userVoteRepository.findByVoteAndVoter(vote, voter).isPresent()) {
             throw new RuntimeException("User has already voted");
         }
 
         VoteOption voteOption = vote.getOptions().stream()
-                .filter(option -> option.getId().equals(request.getVoteOptionId())).findFirst()
-                .orElseThrow(() -> new RuntimeException("VoteOption not found"));
+                        .filter(option -> option.getId().equals(request.getVoteOptionId())).findFirst()
+                        .orElseThrow(() -> new RuntimeException("VoteOption not found"));
 
         voteOption.incrementVoteCount();
 
@@ -90,11 +90,12 @@ public class VoteService {
 
     private VoteDto.VoteResponse buildVoteResponse(Vote vote) {
         List<VoteDto.VoteOptionResponse> optionResponses = vote.getOptions().stream()
-                .map(option -> VoteDto.VoteOptionResponse.builder().id(option.getId())
-                        .messageContent(option.getMessageContent()).voteCount(option.getVoteCount()).build())
-                .collect(Collectors.toList());
+                        .map(option -> VoteDto.VoteOptionResponse.builder().id(option.getId())
+                                        .messageContent(option.getMessageContent()).voteCount(option.getVoteCount())
+                                        .build())
+                        .collect(Collectors.toList());
 
         return VoteDto.VoteResponse.builder().id(vote.getId()).title(vote.getTitle()).isActive(vote.isActive())
-                .createdAt(vote.getCreatedAt()).options(optionResponses).build();
+                        .createdAt(vote.getCreatedAt()).options(optionResponses).build();
     }
 }

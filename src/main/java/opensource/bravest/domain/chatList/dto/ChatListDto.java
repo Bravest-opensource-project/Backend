@@ -40,8 +40,8 @@ public class ChatListDto {
 
         public static ChatListResponse fromEntity(ChatList chatList) {
             return ChatListResponse.builder().id(chatList.getId()).roomId(chatList.getRoomId())
-                    .content(chatList.getContent()).registeredBy(chatList.getRegisteredBy().getId())
-                    .createdAt(chatList.getCreatedAt()).build();
+                            .content(chatList.getContent()).registeredBy(chatList.getRegisteredBy().getId())
+                            .createdAt(chatList.getCreatedAt()).build();
         }
     }
 }

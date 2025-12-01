@@ -32,10 +32,10 @@ public class ChatListService {
     @Transactional
     public ChatListResponse createChatList(ChatListCreateRequest request) {
         AnonymousRoom room = anonymousRoomRepository.findById(request.getRoomId())
-                .orElseThrow(() -> new CustomException(_CHATROOM_NOT_FOUND));
+                        .orElseThrow(() -> new CustomException(_CHATROOM_NOT_FOUND));
 
         AnonymousProfile profile = anonymousProfileRepository.findById(request.getRegisteredBy())
-                .orElseThrow(() -> new CustomException(_USER_NOT_FOUND));
+                        .orElseThrow(() -> new CustomException(_USER_NOT_FOUND));
 
         ChatList chatList = ChatList.builder().room(room).registeredBy(profile).content(request.getContent()).build();
 
