@@ -6,7 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface AnonymousRoomRepository extends JpaRepository<AnonymousRoom, Long> {
 
-  Optional<AnonymousRoom> findByRoomCode(String roomCode);
+    Optional<AnonymousRoom> findByRoomCode(String roomCode);
 
-  boolean existsByRoomCode(String roomCode);
+    boolean existsByRoomCode(String roomCode);
 }

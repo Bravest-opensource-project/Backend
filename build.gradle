@@ -3,6 +3,7 @@ plugins {
 	id 'org.springframework.boot' version '3.5.7'
 	id 'io.spring.dependency-management' version '1.1.7'
 	id 'com.diffplug.spotless' version '6.25.0'
+	id 'checkstyle'
 }
 
 group = 'opensource'
@@ -67,26 +68,28 @@ tasks.named('test') {
 	useJUnitPlatform()
 }
 
-apply plugin: 'checkstyle'
-
-checkstyle {
-	toolVersion = '10.12.0'
-	configFile = file('config/checkstyle/google_checks.xml')
+tasks.register("checkstyle") {
+	dependsOn("checkstyleMain", "checkstyleTest")
 }
 
-tasks.withType(Checkstyle) {
+checkstyle {
+	toolVersion = "10.12.0"
+
+	configFile = file("${rootDir}/config/checkstyle/google_checks.xml")
+}
+
+tasks.withType(Checkstyle).configureEach {
 	reports {
 		xml.required.set(true)
 		html.required.set(true)
 	}
 }
 
-// Spotless 적용
-apply plugin: 'com.diffplug.spotless'
-
 spotless {
 	java {
-		googleJavaFormat()
+		eclipse().configFile file("${rootDir}/config/checkstyle/checkstyle_eclipse_format.xml")
 		target 'src/**/*.java'
+		trimTrailingWhitespace()
+		endWithNewline()
 	}
 }

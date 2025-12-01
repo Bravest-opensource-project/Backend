@@ -7,6 +7,6 @@ import org.springframework.data.jpa.repository.Query;
 
 public interface ChatListRepository extends JpaRepository<ChatList, Long> {
 
-  @Query("SELECT c FROM ChatList c WHERE c.room.id = :roomId ORDER BY c.createdAt DESC")
-  List<ChatList> findAllByRoomId(Long roomId);
+    @Query("SELECT c FROM ChatList c WHERE c.room.id = :roomId ORDER BY c.createdAt DESC")
+    List<ChatList> findAllByRoomId(Long roomId);
 }

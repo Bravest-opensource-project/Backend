@@ -13,22 +13,22 @@ import opensource.bravest.domain.room.entity.AnonymousRoom;
 @Builder
 public class ChatMessage {
 
-  @Id
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
-  private Long id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
-  // 어느 방의 메시지인지
-  @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "room_id", nullable = false)
-  private AnonymousRoom room;
+    // 어느 방의 메시지인지
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "room_id", nullable = false)
+    private AnonymousRoom room;
 
-  // 누가 보냈는지 (익명 프로필 기준)
-  @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "anonymous_profile_id", nullable = false)
-  private AnonymousProfile sender;
+    // 누가 보냈는지 (익명 프로필 기준)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "anonymous_profile_id", nullable = false)
+    private AnonymousProfile sender;
 
-  @Column(nullable = false, length = 1000)
-  private String content;
+    @Column(nullable = false, length = 1000)
+    private String content;
 
-  private LocalDateTime createdAt;
+    private LocalDateTime createdAt;
 }

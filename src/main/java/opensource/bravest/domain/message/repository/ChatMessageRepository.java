@@ -7,6 +7,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface ChatMessageRepository extends JpaRepository<ChatMessage, Long> {
 
-  // 방 기준으로 최근 메시지 목록
-  List<ChatMessage> findByRoomOrderByCreatedAtAsc(AnonymousRoom room);
+    // 방 기준으로 최근 메시지 목록
+    List<ChatMessage> findByRoomOrderByCreatedAtAsc(AnonymousRoom room);
 }

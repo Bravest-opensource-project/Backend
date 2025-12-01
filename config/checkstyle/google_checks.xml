@@ -1,10 +1,46 @@
-<?xml version="1.0"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE module PUBLIC
         "-//Checkstyle//DTD Checkstyle Configuration 1.3//EN"
         "https://checkstyle.org/dtds/configuration_1_3.dtd">
 
 <module name="Checker">
+    <property name="charset" value="UTF-8"/>
+
+    <module name="FileLength">
+        <property name="max" value="3000"/>
+    </module>
+
+    <module name="FileTabCharacter">
+        <property name="eachLine" value="true"/>
+    </module>
+
+    <module name="LineLength">
+        <property name="max" value="200"/>
+    </module>
+
     <module name="TreeWalker">
-        <!-- 최소 규칙만 적용 -->
+        <module name="WhitespaceAfter"/>
+
+        <module name="Indentation">
+            <property name="basicOffset" value="4"/>
+            <property name="braceAdjustment" value="0"/>
+            <property name="caseIndent" value="4"/>
+            <property name="tabWidth" value="4"/>
+            <property name="arrayInitIndent" value="16"/>
+        </module>
+
+        <module name="UnusedImports"/>
+
+        <module name="TypeName"/>
+        <module name="MethodName"/>
+        <module name="ParameterName"/>
+        <module name="LocalVariableName"/>
+        <module name="MemberName"/>
+
+        <module name="LeftCurly"/>
+        <module name="RightCurly"/>
+
+        <module name="EmptyStatement"/>
+        <module name="FallThrough"/>
     </module>
 </module>

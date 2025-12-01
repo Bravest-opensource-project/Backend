@@ -10,21 +10,21 @@ import lombok.*;
 @Builder
 public class VoteOption {
 
-  @Id
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
-  private Long id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
-  @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "vote_id", nullable = false)
-  private Vote vote;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "vote_id", nullable = false)
+    private Vote vote;
 
-  @Column(name = "message_content", nullable = false)
-  private String messageContent;
+    @Column(name = "message_content", nullable = false)
+    private String messageContent;
 
-  @Column(nullable = false)
-  private int voteCount;
+    @Column(nullable = false)
+    private int voteCount;
 
-  public void incrementVoteCount() {
-    this.voteCount++;
-  }
+    public void incrementVoteCount() {
+        this.voteCount++;
+    }
 }
