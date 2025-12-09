@@ -2,6 +2,8 @@ plugins {
 	id 'java'
 	id 'org.springframework.boot' version '3.5.7'
 	id 'io.spring.dependency-management' version '1.1.7'
+	id 'com.diffplug.spotless' version '6.25.0'
+	id 'checkstyle'
 }
 
 group = 'opensource'
@@ -28,18 +30,66 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 	implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
 	implementation 'org.springframework.boot:spring-boot-starter-web'
-	compileOnly 'org.projectlombok:lombok'
+    implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+    compileOnly 'org.projectlombok:lombok'
 	developmentOnly 'org.springframework.boot:spring-boot-devtools'
 	runtimeOnly 'com.mysql:mysql-connector-j'
 	annotationProcessor 'org.projectlombok:lombok'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+	implementation 'org.springframework.boot:spring-boot-starter-websocket'
+	implementation 'me.paulschwarz:spring-dotenv:4.0.0'
+	implementation 'org.springframework.boot:spring-boot-starter-web'
+	implementation 'org.springframework.boot:spring-boot-starter-security'
+	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+	implementation 'org.springframework.boot:spring-boot-starter-actuator'
+	implementation 'com.mysql:mysql-connector-j'
+	// Swagger (springdoc)
+	implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.14'
+	// JWT (jjwt 0.12.x)
+	implementation 'io.jsonwebtoken:jjwt-api:0.12.5'
+	runtimeOnly   'io.jsonwebtoken:jjwt-impl:0.12.5'
+	runtimeOnly   'io.jsonwebtoken:jjwt-jackson:0.12.5'
+
+
+	// Lombok
+	compileOnly 'org.projectlombok:lombok'
+	annotationProcessor 'org.projectlombok:lombok'
+
+	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+	testImplementation 'org.springframework.security:spring-security-test'
+
+	//env
 	implementation 'me.paulschwarz:spring-dotenv:4.0.0'
 
-	//swagger 세팅입니다
-	implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.6.0'
 }
 
 tasks.named('test') {
 	useJUnitPlatform()
+}
+
+tasks.register("checkstyle") {
+	dependsOn("checkstyleMain", "checkstyleTest")
+}
+
+checkstyle {
+	toolVersion = "10.12.0"
+
+	configFile = file("${rootDir}/config/checkstyle/google_checks.xml")
+}
+
+tasks.withType(Checkstyle).configureEach {
+	reports {
+		xml.required.set(true)
+		html.required.set(true)
+	}
+}
+
+spotless {
+	java {
+		eclipse().configFile file("${rootDir}/config/checkstyle/checkstyle_eclipse_format.xml")
+		target 'src/**/*.java'
+		trimTrailingWhitespace()
+		endWithNewline()
+	}
 }

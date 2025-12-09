@@ -13,15 +13,10 @@ public class SwaggerConfig {
 
     @Bean
     public OpenAPI openAPI() {
-        return new OpenAPI()
-                .components(new Components())
-                .info(apiInfo());
+        return new OpenAPI().components(new Components()).info(apiInfo());
     }
 
     private Info apiInfo() {
-        return new Info()
-                .title("Bravest")
-                .description("오픈소스 프로젝트 Bravest api 명세서입니다.")
-                .version("1.0.0");
+        return new Info().title("Bravest").description("오픈소스 프로젝트 Bravest api 명세서입니다.").version("1.0.0");
     }
 }

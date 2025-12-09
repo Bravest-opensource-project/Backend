@@ -1,0 +1,127 @@
+name: Docker Compose Test
+
+on:
+  pull_request:
+    push:
+      branches:
+        - main
+        - develop
+    paths:
+      - 'docker-compose.yml'
+      - 'Dockerfile.backend'
+      - 'src/**'
+  push:
+    branches:
+      - main
+      - develop
+  workflow_dispatch:
+
+jobs:
+  docker-compose-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v3
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
+      - name: Grant execute permission for gradlew
+        run: chmod +x gradlew
+
+      - name: Build with Gradle
+        run: ./gradlew bootJar
+
+      - name: Create .env file from secrets
+        run: |
+          cat > .env << EOF
+          # Database Configuration
+          DB_PASSWORD=${{ secrets.DB_PASSWORD }}
+          DB_USERNAME=${{ secrets.DB_USERNAME }}
+          DB_URL=${{ secrets.DB_URL }}
+          
+          # JWT Configuration
+          JWT_SECRET=${{ secrets.JWT_SECRET }}
+          JWT_ACCESS_TOKEN_VALIDITY_SECONDS=${{ secrets.JWT_ACCESS_TOKEN_VALIDITY_SECONDS }}
+          JWT_REFRESH_TOKEN_VALIDITY_SECONDS=${{ secrets.JWT_REFRESH_TOKEN_VALIDITY_SECONDS }}
+          EOF
+
+      - name: Start Docker Compose
+        run: docker compose up -d
+
+      - name: Check running containers
+        run: docker compose ps
+
+      - name: Wait for services to be ready
+        run: |
+            echo "⏳ Waiting for MySQL to be ready..."
+            timeout 30 bash -c 'until docker compose exec -T db mysqladmin ping \
+              -h localhost -uroot -p"${{ secrets.DB_PASSWORD }}" --silent 2>/dev/null; do sleep 2; done'
+            echo "✅ MySQL is ready!"
+            
+            echo "⏳ Waiting for Valkey to be ready..."
+            timeout 30 bash -c 'until docker compose exec -T keystore valkey-cli ping 2>/dev/null | grep -q PONG; do sleep 2; done'
+            echo "✅ Valkey is ready!"
+            
+            echo "⏳ Waiting for application to be ready..."
+            timeout 90 bash -c 'until curl -f http://localhost:8080/actuator/health 2>/dev/null; do sleep 3; done'
+            echo "✅ Application is ready!"
+
+      - name: Health check
+        run: |
+          response=$(curl -s http://localhost:8080/actuator/health)
+          echo "Health check response: $response"
+          if echo "$response" | grep -q '"status":"UP"'; then
+            echo "✅ Health check passed!"
+          else
+            echo "❌ Health check failed!"
+            exit 1
+          fi
+
+      - name: Test MySQL connection
+        env:
+          DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+          DB_USERNAME: ${{ secrets.DB_USERNAME }}
+        run: |
+          echo "Testing MySQL connection..."
+          docker compose exec -T db mysql -u"$DB_USERNAME" -p"$DB_PASSWORD" -e "SELECT 1;" && \
+          echo "✅ MySQL connection successful!" || \
+          (echo "❌ MySQL connection failed!" && exit 1)
+
+      - name: Test Valkey connection
+        run: |
+          echo "Testing Valkey connection..."
+          result=$(docker compose exec -T keystore valkey-cli ping)
+          if [ "$result" = "PONG" ]; then
+            echo "✅ Valkey connection successful!"
+          else
+            echo "❌ Valkey connection failed!"
+            exit 1
+          fi
+
+      - name: Show container logs on failure
+        if: failure()
+        run: |
+          echo "=== Application Logs ==="
+          docker compose logs app
+          echo "=== Database Logs ==="
+          docker compose logs db
+          echo "=== Valkey Logs ==="
+          docker compose logs keystore
+
+      - name: Stop Docker Compose
+        if: always()
+        run: docker compose down -v
+
+      - name: Test Summary
+        if: success()
+        run: |
+          echo "🎉 All Docker Compose tests passed!"
+          echo "✅ MySQL connection verified"
+          echo "✅ Valkey connection verified"
+          echo "✅ Application health check passed"
+          echo "✅ All services running correctly"
