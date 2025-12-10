@@ -1,3 +1,7 @@
+<p align="center">
+    <img src="docs/bravest.png" alt="Dumbucket logo" width="500" />
+</p>
+
 ## 개요
 
 ### Bravest란 무엇인가
